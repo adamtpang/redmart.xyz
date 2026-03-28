@@ -251,7 +251,10 @@ export default function HomePage() {
         </div>
         <div className="flex items-center gap-4">
           <Link href="/demands" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
-            Demand Board
+            Demands
+          </Link>
+          <Link href="/sell" className="text-sm bg-accent/10 text-accent-light border border-accent/20 px-3 py-1 rounded-lg hover:bg-accent/20 transition-colors">
+            Sell
           </Link>
         </div>
       </nav>
