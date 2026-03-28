@@ -37,12 +37,12 @@ export default function SellPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-surface-0 text-text-primary">
+    <div className="min-h-screen bg-surface-0 text-text-primary font-body">
       {/* Nav */}
       <nav className="border-b border-border px-5 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-accent to-accent-light flex items-center justify-center shadow-md shadow-accent/20">
-            <span className="font-display text-base font-bold text-white tracking-tight">R</span>
+          <div className="w-9 h-9 rounded-full overflow-hidden bg-accent shadow-md shadow-black/30 flex-shrink-0">
+            <img src="/red.jpg" alt="Red" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center"><span class="font-display text-base font-bold text-white">R</span></div>' }} />
           </div>
           <span className="font-display text-lg font-semibold tracking-wide">RedMart</span>
         </Link>

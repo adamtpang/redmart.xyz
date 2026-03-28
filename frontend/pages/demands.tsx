@@ -85,21 +85,30 @@ export default function DemandsPage() {
   const sourcingCount = demands.filter(d => d.status === 'sourcing').length
 
   return (
-    <div className="min-h-screen bg-surface-0 text-text-primary">
-      {/* Header */}
-      <div className="border-b border-border px-5 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="w-10 h-10 rounded-full bg-gradient-to-br from-accent to-accent-light flex items-center justify-center shadow-lg shadow-accent/20">
-            <span className="font-display text-lg font-bold text-white tracking-tight">R</span>
-          </Link>
-          <div>
-            <h1 className="font-display text-lg font-semibold tracking-wide">Demand Board</h1>
-            <p className="text-xs text-text-tertiary">What NS needs — Red is listening</p>
+    <div className="min-h-screen bg-surface-0 text-text-primary font-body">
+      {/* Nav */}
+      <nav className="border-b border-border px-5 py-3 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full overflow-hidden bg-accent shadow-md shadow-black/30 flex-shrink-0">
+            <img src="/red.jpg" alt="Red" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center"><span class="font-display text-base font-bold text-white">R</span></div>' }} />
           </div>
+          <span className="font-display text-lg font-semibold tracking-wide">RedMart</span>
+        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Home</Link>
+          <Link href="/sell" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Sell</Link>
+        </div>
+      </nav>
+
+      {/* Header */}
+      <div className="px-5 pt-6 pb-4 flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-2xl font-semibold tracking-wide">Demand Board</h1>
+          <p className="text-xs text-text-tertiary mt-1">What NS needs. Red is listening.</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-accent text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-accent-light transition-colors"
+          className="bg-accent text-white text-sm font-display font-semibold px-4 py-2 rounded-xl hover:bg-accent-light transition-colors"
         >
           + Request
         </button>
@@ -214,9 +223,11 @@ export default function DemandsPage() {
       <div className="fixed bottom-4 right-4">
         <Link
           href="/"
-          className="bg-accent text-white text-sm font-medium pl-3 pr-4 py-2.5 rounded-full shadow-lg shadow-accent/30 hover:bg-accent-light transition-colors flex items-center gap-2"
+          className="bg-accent text-white text-sm font-display font-semibold pl-3 pr-4 py-2.5 rounded-full shadow-lg shadow-black/40 hover:bg-accent-light transition-colors flex items-center gap-2"
         >
-          <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">R</span>
+          <div className="w-6 h-6 rounded-full overflow-hidden bg-white/20 flex-shrink-0">
+            <img src="/red.jpg" alt="Red" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center"><span class="text-xs font-bold">R</span></div>' }} />
+          </div>
           Ask Red
         </Link>
       </div>
