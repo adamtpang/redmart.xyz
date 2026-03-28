@@ -49,7 +49,7 @@ function getVotedSet(): Set<string> {
 }
 
 function saveVoted(voted: Set<string>) {
-  localStorage.setItem('red-voted', JSON.stringify([...voted]))
+  localStorage.setItem('red-voted', JSON.stringify(Array.from(voted)))
 }
 
 export default function DemandsPage() {
