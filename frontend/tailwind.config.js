@@ -5,31 +5,36 @@ module.exports = {
     extend: {
       colors: {
         surface: {
-          0: '#0A0A0B',
-          1: '#151518',
-          2: '#1A1A1A',
-          3: '#222225',
+          0: '#0C0A0A',
+          1: '#161212',
+          2: '#1E1818',
+          3: '#262020',
         },
         border: {
-          DEFAULT: 'rgba(255,255,255,0.08)',
-          hover: 'rgba(255,255,255,0.12)',
-          active: 'rgba(255,255,255,0.16)',
+          DEFAULT: 'rgba(255,220,220,0.08)',
+          hover: 'rgba(255,220,220,0.14)',
+          active: 'rgba(255,220,220,0.20)',
         },
         text: {
-          primary: 'rgba(255,255,255,0.95)',
-          secondary: 'rgba(255,255,255,0.72)',
-          tertiary: 'rgba(255,255,255,0.48)',
+          primary: 'rgba(255,248,245,0.95)',
+          secondary: 'rgba(255,248,245,0.68)',
+          tertiary: 'rgba(255,248,245,0.42)',
         },
         accent: {
-          DEFAULT: '#00FF94',
-          dim: 'rgba(0,255,148,0.12)',
-          hover: 'rgba(0,255,148,0.18)',
+          DEFAULT: '#8B2232',
+          light: '#C2344D',
+          dim: 'rgba(139,34,50,0.15)',
+          hover: 'rgba(139,34,50,0.25)',
+        },
+        gold: {
+          DEFAULT: '#C9A84C',
+          dim: 'rgba(201,168,76,0.15)',
         },
         status: {
-          success: '#00FF94',
-          warning: '#FFB224',
-          error: '#FF4444',
-          info: '#3B82F6',
+          success: '#4CAF72',
+          warning: '#D4A03C',
+          error: '#C2344D',
+          info: '#5B7DB1',
         }
       },
       fontSize: {
@@ -40,6 +45,10 @@ module.exports = {
         'xl': ['16px', { lineHeight: '24px' }],
         '2xl': ['20px', { lineHeight: '28px' }],
         '3xl': ['24px', { lineHeight: '32px' }],
+      },
+      fontFamily: {
+        display: ['Calluna', 'Georgia', 'serif'],
+        body: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
       },
     },
   },

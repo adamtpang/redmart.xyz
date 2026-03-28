@@ -1,174 +1,204 @@
-import React, { useState } from 'react'
-import Shell from '../components/Shell'
-import KPICard from '../components/KPICard'
-import Card from '../components/ui/Card'
-import LineChart from '../components/charts/LineChart'
-import BarChart from '../components/charts/BarChart'
-import LiveFeed from '../components/LiveFeed'
-import { useApi } from '../hooks/useApi'
-import { useRevenue, useTopProducts } from '../hooks/useAnalytics'
-import { api } from '../lib/api'
-import { formatCurrency, formatNumber } from '../lib/utils'
-import type { StoreInfo, RevenueDataPoint, TopProduct, LiveEvent } from '../lib/types'
+import React, { useState, useRef, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 
-// ── Mock Data ──────────────────────────────────────────────────────────────
-
-const MOCK_STORE: StoreInfo = {
-  domain: 'snowdevil.myshopify.com',
-  name: 'Snow Devil',
-  currency: 'USD',
-  product_count: 42,
-  order_count: 1283,
-  customer_count: 891,
-  last_sync_at: '2026-03-24T10:30:00Z',
+interface Message {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
 }
 
-// Seeded pseudo-random to avoid SSR/client hydration mismatch
-function seededRandom(seed: number) {
-  const x = Math.sin(seed) * 10000
-  return x - Math.floor(x)
+const QUICK_ACTIONS = [
+  "What do you have?",
+  "I need sunscreen",
+  "What's popular right now?",
+  "I'm looking for snacks",
+]
+
+function renderBold(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/)
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} className="text-white font-semibold">{part.slice(2, -2)}</strong>
+    }
+    return <span key={i}>{part}</span>
+  })
 }
 
-function generateMockRevenue(): RevenueDataPoint[] {
-  const data: RevenueDataPoint[] = []
-  for (let i = 29; i >= 0; i--) {
-    const seed = i + 42
-    const base = 2800 + seededRandom(seed) * 1200
-    const orders = 18 + Math.floor(seededRandom(seed + 100) * 15)
-    data.push({
-      date: `2026-03-${String(29 - i).padStart(2, '0')}`,
-      revenue: Math.round(base * 100) / 100,
-      orders,
-      aov: Math.round((base / orders) * 100) / 100,
-    })
+export default function RedChat() {
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [greeted, setGreeted] = useState(false)
+  const bottomRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, loading])
+
+  useEffect(() => {
+    if (!greeted) {
+      setGreeted(true)
+      setMessages([{
+        id: 'greeting',
+        role: 'assistant',
+        content: "I'm Red. I'm the guy who can get things. Tell me what you need and I'll see what I can do for you.",
+      }])
+    }
+  }, [greeted])
+
+  async function sendMessage(text: string) {
+    if (!text.trim() || loading) return
+
+    const userMsg: Message = {
+      id: `user-${Date.now()}`,
+      role: 'user',
+      content: text.trim(),
+    }
+
+    const newMessages = [...messages, userMsg]
+    setMessages(newMessages)
+    setInput('')
+    setLoading(true)
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: newMessages
+            .filter(m => m.id !== 'greeting')
+            .map(m => ({ role: m.role, content: m.content })),
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Something went wrong')
+      }
+
+      setMessages(prev => [...prev, {
+        id: `assistant-${Date.now()}`,
+        role: 'assistant',
+        content: data.reply,
+      }])
+    } catch (err: any) {
+      setMessages(prev => [...prev, {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: `I'm having some trouble right now. ${err.message || 'Try again in a moment.'}`,
+      }])
+    } finally {
+      setLoading(false)
+      inputRef.current?.focus()
+    }
   }
-  return data
-}
 
-const MOCK_REVENUE = generateMockRevenue()
-
-const MOCK_TOP_PRODUCTS: TopProduct[] = [
-  { id: '1', title: 'The Complete Snowboard', revenue: 12480, units_sold: 48 },
-  { id: '2', title: 'The Collection Snowboard: Hydrogen', revenue: 9360, units_sold: 36 },
-  { id: '3', title: 'The Multi-managed Snowboard', revenue: 7540, units_sold: 29 },
-  { id: '4', title: 'The Draft Snowboard', revenue: 5200, units_sold: 20 },
-  { id: '5', title: 'Selling Plans Ski Wax', revenue: 3120, units_sold: 78 },
-]
-
-const MOCK_EVENTS: LiveEvent[] = [
-  { id: '1', event_type: 'new_order', payload: { order_number: '1042', total_price: 259.99 }, created_at: new Date(Date.now() - 60000).toISOString() },
-  { id: '2', event_type: 'customer_created', payload: { email: 'sarah@example.com' }, created_at: new Date(Date.now() - 180000).toISOString() },
-  { id: '3', event_type: 'new_order', payload: { order_number: '1041', total_price: 149.50 }, created_at: new Date(Date.now() - 300000).toISOString() },
-  { id: '4', event_type: 'inventory_change', payload: { product_title: 'Complete Snowboard' }, created_at: new Date(Date.now() - 420000).toISOString() },
-  { id: '5', event_type: 'new_order', payload: { order_number: '1040', total_price: 89.99 }, created_at: new Date(Date.now() - 600000).toISOString() },
-  { id: '6', event_type: 'product_update', payload: { title: 'Hydrogen Snowboard' }, created_at: new Date(Date.now() - 900000).toISOString() },
-  { id: '7', event_type: 'refund_issued', payload: { order_number: '1035' }, created_at: new Date(Date.now() - 1200000).toISOString() },
-  { id: '8', event_type: 'new_order', payload: { order_number: '1039', total_price: 324.00 }, created_at: new Date(Date.now() - 1500000).toISOString() },
-]
-
-// ── Page Component ─────────────────────────────────────────────────────────
-
-export default function DashboardPage() {
-  const [useMock, setUseMock] = useState(false)
-
-  const { data: storeData, error: storeError } = useApi(() => api.getStore(), [])
-  const { data: revenueData, error: revenueError } = useRevenue('30d')
-  const { data: topData, error: topError } = useTopProducts(5)
-
-  // Use mock data if backend is unreachable or returns empty data
-  const isMock = useMock || !!(storeError || revenueError)
-  const store = storeData || MOCK_STORE
-  const revenue = revenueData?.series?.length ? revenueData.series : MOCK_REVENUE
-  const topProducts = topData?.products?.length ? topData.products : MOCK_TOP_PRODUCTS
-
-  // Compute KPIs from revenue series
-  const totalRevenue = revenue.reduce((sum, d) => sum + d.revenue, 0)
-  const totalOrders = revenue.reduce((sum, d) => sum + d.orders, 0)
-  const avgAOV = totalOrders > 0 ? totalRevenue / totalOrders : 0
-
-  // Simulated period-over-period change
-  const half = Math.floor(revenue.length / 2)
-  const firstHalf = revenue.slice(0, half).reduce((s, d) => s + d.revenue, 0)
-  const secondHalf = revenue.slice(half).reduce((s, d) => s + d.revenue, 0)
-  const revenueChange = firstHalf > 0 ? ((secondHalf - firstHalf) / firstHalf) * 100 : 0
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    sendMessage(input)
+  }
 
   return (
-    <Shell title="Dashboard">
-      {/* Mock banner */}
-      {isMock && (
-        <div className="bg-status-warning/10 border border-status-warning/20 rounded-lg px-4 py-2 mb-4 flex items-center justify-between">
-          <span className="text-xs text-status-warning">
-            Using demo data — make sure backend is running (check terminal for "API" logs, or visit localhost:8000/health)
-          </span>
-          <button
-            onClick={() => setUseMock(false)}
-            className="text-xs text-text-tertiary hover:text-text-secondary"
+    <div className="h-screen flex flex-col bg-surface-0 text-text-primary">
+      {/* Header */}
+      <div className="flex-shrink-0 border-b border-border px-5 py-4 flex items-center gap-4">
+        <div className="w-11 h-11 rounded-full bg-gradient-to-br from-accent to-accent-light flex items-center justify-center shadow-lg shadow-accent/20">
+          <span className="font-display text-xl font-bold text-white tracking-tight">R</span>
+        </div>
+        <div>
+          <h1 className="font-display text-lg font-semibold text-text-primary tracking-wide">Red</h1>
+          <p className="text-xs text-gold flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-gold inline-block" />
+            Online
+          </p>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-4 py-5 space-y-3">
+        <AnimatePresence initial={false}>
+          {messages.map((msg) => (
+            <motion.div
+              key={msg.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                  msg.role === 'user'
+                    ? 'bg-accent text-white rounded-br-md'
+                    : 'bg-surface-2 text-text-primary border border-border rounded-bl-md'
+                }`}
+              >
+                {msg.role === 'assistant' ? (
+                  <div className="whitespace-pre-wrap">{renderBold(msg.content)}</div>
+                ) : (
+                  <div className="whitespace-pre-wrap">{msg.content}</div>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
+        {loading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex justify-start"
           >
-            Dismiss
-          </button>
+            <div className="bg-surface-2 border border-border rounded-2xl rounded-bl-md px-4 py-3 flex gap-1.5">
+              <span className="w-2 h-2 bg-accent-light/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-2 h-2 bg-accent-light/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-2 h-2 bg-accent-light/60 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+          </motion.div>
+        )}
+
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Quick actions */}
+      {messages.length <= 1 && !loading && (
+        <div className="flex-shrink-0 px-4 pb-2">
+          <div className="flex flex-wrap gap-2">
+            {QUICK_ACTIONS.map((action) => (
+              <button
+                key={action}
+                onClick={() => sendMessage(action)}
+                className="text-xs px-3.5 py-1.5 rounded-full border border-border text-text-secondary hover:text-text-primary hover:border-accent/40 hover:bg-accent-dim transition-all duration-150"
+              >
+                {action}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* KPI Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-5">
-        <KPICard
-          title="Total Revenue"
-          value={formatCurrency(totalRevenue)}
-          change={revenueChange}
-        />
-        <KPICard
-          title="Total Orders"
-          value={formatNumber(totalOrders)}
-          change={8.2}
-        />
-        <KPICard
-          title="Avg Order Value"
-          value={formatCurrency(avgAOV)}
-          change={-2.1}
-        />
-        <KPICard
-          title="Customers"
-          value={formatNumber(store.customer_count)}
-          change={12.4}
-        />
+      {/* Input */}
+      <div className="flex-shrink-0 border-t border-border p-3 md:p-4">
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Tell Red what you need..."
+            disabled={loading}
+            className="flex-1 bg-surface-1 border border-border rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent/50 transition-colors disabled:opacity-50"
+          />
+          <button
+            type="submit"
+            disabled={loading || !input.trim()}
+            className="bg-accent text-white font-medium text-sm px-5 py-2.5 rounded-xl hover:bg-accent-light transition-colors duration-150 disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            Send
+          </button>
+        </form>
       </div>
-
-      {/* Charts + Feed */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-5">
-        {/* Revenue chart - 2/3 on desktop, full on mobile */}
-        <div className="md:col-span-2">
-          <Card title="Revenue" subtitle="Last 30 days">
-            <LineChart
-              data={revenue.map((d) => ({
-                label: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-                value: d.revenue,
-              }))}
-              height={220}
-              color="#00FF94"
-              showGrid
-              showLabels
-              showTooltip
-            />
-          </Card>
-        </div>
-
-        {/* Live feed - 1/3 */}
-        <Card className="min-h-[280px]">
-          <LiveFeed maxEvents={20} mockEvents={isMock ? MOCK_EVENTS : undefined} />
-        </Card>
-      </div>
-
-      {/* Top Products */}
-      <Card title="Top Products" subtitle="By revenue">
-        <BarChart
-          data={topProducts.map((p) => ({
-            label: p.title,
-            value: p.revenue,
-          }))}
-          height={180}
-          horizontal
-        />
-      </Card>
-    </Shell>
+    </div>
   )
 }
