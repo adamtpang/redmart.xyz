@@ -5,26 +5,26 @@ module.exports = {
     extend: {
       colors: {
         surface: {
-          0: '#0C0A0A',
-          1: '#161212',
-          2: '#1E1818',
-          3: '#262020',
+          0: '#1A0A0A',
+          1: '#241111',
+          2: '#2E1818',
+          3: '#381F1F',
         },
         border: {
-          DEFAULT: 'rgba(255,220,220,0.08)',
-          hover: 'rgba(255,220,220,0.14)',
-          active: 'rgba(255,220,220,0.20)',
+          DEFAULT: 'rgba(255,200,180,0.10)',
+          hover: 'rgba(255,200,180,0.16)',
+          active: 'rgba(255,200,180,0.22)',
         },
         text: {
-          primary: 'rgba(255,248,245,0.95)',
-          secondary: 'rgba(255,248,245,0.68)',
-          tertiary: 'rgba(255,248,245,0.42)',
+          primary: 'rgba(255,245,238,0.95)',
+          secondary: 'rgba(255,245,238,0.65)',
+          tertiary: 'rgba(255,245,238,0.38)',
         },
         accent: {
           DEFAULT: '#8B2232',
           light: '#C2344D',
-          dim: 'rgba(139,34,50,0.15)',
-          hover: 'rgba(139,34,50,0.25)',
+          dim: 'rgba(139,34,50,0.18)',
+          hover: 'rgba(139,34,50,0.28)',
         },
         gold: {
           DEFAULT: '#C9A84C',
@@ -45,10 +45,11 @@ module.exports = {
         'xl': ['16px', { lineHeight: '24px' }],
         '2xl': ['20px', { lineHeight: '28px' }],
         '3xl': ['24px', { lineHeight: '32px' }],
+        '4xl': ['36px', { lineHeight: '42px' }],
       },
       fontFamily: {
-        display: ['Calluna', 'Georgia', 'serif'],
-        body: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        body: ['"Source Serif 4"', 'Georgia', 'serif'],
       },
     },
   },
