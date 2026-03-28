@@ -84,6 +84,12 @@ function ChatWidget() {
     }
   }, [messages, loading, open])
 
+  useEffect(() => {
+    const handler = () => setOpen(true)
+    window.addEventListener('open-red-chat', handler)
+    return () => window.removeEventListener('open-red-chat', handler)
+  }, [])
+
   async function sendMessage(text: string) {
     if (!text.trim() || loading) return
     const userMsg: Message = { id: `user-${Date.now()}`, role: 'user', content: text.trim() }
@@ -138,7 +144,7 @@ function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-5 right-5 z-50 w-[360px] h-[500px] max-h-[80vh] bg-surface-0 border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-0 right-0 md:bottom-5 md:right-5 z-50 w-full h-full md:w-[380px] md:h-[520px] md:max-h-[80vh] bg-surface-0 md:border md:border-border md:rounded-2xl shadow-2xl flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="flex-shrink-0 border-b border-border px-4 py-3 flex items-center justify-between">
@@ -262,9 +268,10 @@ export default function HomePage() {
           </p>
           <div className="mt-6 flex items-center justify-center gap-3">
             <button
+              id="ask-red-hero"
               onClick={() => {
-                const btn = document.querySelector('.fixed.bottom-5.right-5') as HTMLButtonElement
-                if (btn) btn.click()
+                const event = new CustomEvent('open-red-chat')
+                window.dispatchEvent(event)
               }}
               className="bg-accent text-white font-medium text-sm px-6 py-2.5 rounded-xl hover:bg-accent-light transition-colors shadow-lg shadow-accent/20"
             >
