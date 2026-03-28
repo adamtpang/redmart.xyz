@@ -32,13 +32,35 @@ const STATUS_LABELS = {
   fulfilled: 'Got it',
 }
 
+function getVoterId(): string {
+  let id = localStorage.getItem('red-voter-id')
+  if (!id) {
+    id = `v-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    localStorage.setItem('red-voter-id', id)
+  }
+  return id
+}
+
+function getVotedSet(): Set<string> {
+  try {
+    const raw = localStorage.getItem('red-voted')
+    return new Set(raw ? JSON.parse(raw) : [])
+  } catch { return new Set() }
+}
+
+function saveVoted(voted: Set<string>) {
+  localStorage.setItem('red-voted', JSON.stringify([...voted]))
+}
+
 export default function DemandsPage() {
   const [demands, setDemands] = useState<Demand[]>([])
+  const [voted, setVoted] = useState<Set<string>>(new Set())
   const [showForm, setShowForm] = useState(false)
   const [newItem, setNewItem] = useState('')
   const [newDesc, setNewDesc] = useState('')
 
   useEffect(() => {
+    setVoted(getVotedSet())
     const stored = localStorage.getItem('red-demands')
     if (stored) {
       setDemands(JSON.parse(stored))
@@ -54,10 +76,15 @@ export default function DemandsPage() {
   }
 
   function handleVote(id: string) {
+    if (voted.has(id)) return // already voted
     const updated = demands.map(d =>
       d.id === id ? { ...d, votes: d.votes + 1 } : d
     )
     saveDemands(updated)
+    const newVoted = new Set(voted)
+    newVoted.add(id)
+    setVoted(newVoted)
+    saveVoted(newVoted)
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -190,12 +217,13 @@ export default function DemandsPage() {
             {/* Vote button */}
             <button
               onClick={() => handleVote(demand.id)}
-              className="flex flex-col items-center gap-0.5 min-w-[40px] group"
+              disabled={voted.has(demand.id)}
+              className={`flex flex-col items-center gap-0.5 min-w-[40px] group ${voted.has(demand.id) ? 'cursor-default' : 'cursor-pointer'}`}
             >
-              <svg width="16" height="10" viewBox="0 0 16 10" className="text-text-tertiary group-hover:text-accent-light transition-colors">
+              <svg width="16" height="10" viewBox="0 0 16 10" className={`transition-colors ${voted.has(demand.id) ? 'text-accent-light' : 'text-text-tertiary group-hover:text-accent-light'}`}>
                 <path d="M8 0L15 10H1L8 0Z" fill="currentColor" />
               </svg>
-              <span className="text-sm font-semibold text-text-secondary group-hover:text-accent-light transition-colors">
+              <span className={`text-sm font-semibold transition-colors ${voted.has(demand.id) ? 'text-accent-light' : 'text-text-secondary group-hover:text-accent-light'}`}>
                 {demand.votes}
               </span>
             </button>
