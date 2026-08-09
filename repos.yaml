@@ -1,0 +1,11 @@
+# repos.yaml v0 — see github.com/adamtpang/repo-connect
+repo: redmart.xyz
+is: "Red," an AI chat widget that matches supply and demand, originally built for a Network School community marketplace at a Shopify AI x Commerce hackathon.
+url: https://redmart.xyz
+cluster: reddit-tooling
+
+kin:
+  - repo: pond-finder
+    why: pond-finder finds and ranks real Reddit demand signals (threads where someone needs what a project sells); redmart's existing demand feed, chat widget, and voting UI are the natural place to surface them once wired to a real data source instead of the current hardcoded mock array
+  - repo: beware.dog
+    why: beware.dog is the first real test case, its lookalike-domain scan is a live-verified working offer (2026-08-09) that a Reddit-sourced demand feed could route real replies through
