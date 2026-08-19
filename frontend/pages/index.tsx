@@ -1,6 +1,33 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
+import Head from 'next/head'
+
+// ── SEO: canonical URL + Organization/WebSite JSON-LD ──────────────────────
+// GPTBot and other crawlers fetch raw HTML with no JS execution, so this
+// metadata has to be present in the server-rendered markup (next/head is
+// fine here since these pages are statically prerendered, not client-only).
+
+const SITE_URL = 'https://redmart.xyz'
+
+const homepageJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
+      name: 'RedMart',
+      url: `${SITE_URL}/`,
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      name: 'RedMart',
+      url: `${SITE_URL}/`,
+      publisher: { '@id': `${SITE_URL}/#organization` },
+    },
+  ],
+}
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
@@ -237,7 +264,15 @@ function ChatWidget() {
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-surface-0 text-text-primary font-body">
+    <>
+      <Head>
+        <link rel="canonical" href={`${SITE_URL}/`} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageJsonLd) }}
+        />
+      </Head>
+      <div className="min-h-screen bg-surface-0 text-text-primary font-body">
       {/* Nav */}
       <nav className="border-b border-border px-5 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -410,6 +445,7 @@ export default function HomePage() {
 
       {/* Chat Widget */}
       <ChatWidget />
-    </div>
+      </div>
+    </>
   )
 }
