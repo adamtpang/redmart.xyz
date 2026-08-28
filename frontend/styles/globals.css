@@ -26,3 +26,36 @@ body {
 
 /* Utility */
 .transition-default { transition: all 150ms ease-out; }
+
+@layer base {
+  :root, .dark {
+    --background: #1A0A0A;
+    --foreground: rgba(255,245,238,0.95);
+    --card: #241111;
+    --card-foreground: rgba(255,245,238,0.95);
+    --popover: #241111;
+    --popover-foreground: rgba(255,245,238,0.95);
+    --primary: #8B2232;
+    --primary-foreground: #FFF5EE;
+    --secondary: #2E1818;
+    --secondary-foreground: rgba(255,245,238,0.95);
+    --muted: #2E1818;
+    --muted-foreground: rgba(255,245,238,0.65);
+    --accent: rgba(201,168,76,0.15);
+    --accent-foreground: #C9A84C;
+    --destructive: #C2344D;
+    --destructive-foreground: #FFF5EE;
+    --border: rgba(255,200,180,0.10);
+    --input: rgba(255,200,180,0.16);
+    --ring: #C9A84C;
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

@@ -24,8 +24,8 @@ export function timeAgo(date: string): string {
   return `${Math.floor(seconds / 86400)}d ago`
 }
 
-export function cn(...classes: (string | boolean | undefined | null)[]): string {
-  return classes.filter(Boolean).join(' ')
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
 }
 
 export function getStatusColor(status: string): string {
@@ -45,3 +45,5 @@ export function getStatusBg(status: string): string {
     default: return 'bg-surface-2 text-text-secondary'
   }
 }
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"

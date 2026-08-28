@@ -11,7 +11,7 @@ const read = (relative) => readFile(path.join(root, relative), 'utf8')
 
 test('homepage exposes canonical metadata, structured identity, and named chat controls', async () => {
   const source = await read('pages/index.tsx')
-  assert.match(source, /<title>RedMart \| Community Marketplace<\/title>/)
+  assert.match(source, /<title>RedMart \| Reddit and Facebook Engagement That Sells<\/title>/)
   assert.match(source, /rel="canonical"/)
   assert.match(source, /application\/ld\+json/)
   assert.match(source, /aria-label="Open Red chat"/)
