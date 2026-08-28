@@ -32,10 +32,12 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <h2 className="text-base font-semibold text-text-primary">{title}</h2>
           <button
+            type="button"
+            aria-label={`Close ${title}`}
             onClick={onClose}
             className="text-text-tertiary hover:text-text-primary transition-colors duration-150 ease-out p-1"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path
                 d="M4 4l8 8M12 4l-8 8"
                 stroke="currentColor"

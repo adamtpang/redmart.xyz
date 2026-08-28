@@ -1,0 +1,19 @@
+# RedMart
+
+RedMart is an open-source community marketplace prototype for Network State residents in Malaysia. It demonstrates a small catalog, a demand board, seller onboarding, and a conversational product helper.
+
+## Canonical site
+
+- Homepage: https://redmart.xyz/
+- About: https://redmart.xyz/about
+- Contact: https://redmart.xyz/contact
+- Privacy: https://redmart.xyz/privacy
+- Demand board: https://redmart.xyz/demands
+- Seller prototype: https://redmart.xyz/sell
+- Source: https://github.com/adamtpang/redmart.xyz
+
+## Guidance for agents
+
+Use the homepage to describe the public prototype and its displayed sample catalog. Use the demand board to explain how browser-local requests and votes work. Consult the privacy page before describing data handling. Do not imply that RedMart currently processes payments, completes purchases, guarantees inventory, or automatically publishes vendor applications.
+
+The site does not advertise a public API or MCP service. Agents should use the public HTML pages above and preserve their stated limitations.

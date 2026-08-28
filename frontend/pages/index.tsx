@@ -18,6 +18,7 @@ const homepageJsonLd = {
       '@id': `${SITE_URL}/#organization`,
       name: 'RedMart',
       url: `${SITE_URL}/`,
+      sameAs: ['https://github.com/adamtpang/redmart.xyz'],
     },
     {
       '@type': 'WebSite',
@@ -150,13 +151,15 @@ function ChatWidget() {
       <AnimatePresence>
         {!open && (
           <motion.button
+            type="button"
+            aria-label="Open Red chat"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
             onClick={() => setOpen(true)}
-            className="fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-accent to-accent-light shadow-lg shadow-black/40 flex items-center justify-center hover:scale-105 transition-transform overflow-hidden"
+            className="fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-accent to-accent-light shadow-lg shadow-black/40 flex items-center justify-center hover:scale-105 transition-transform"
           >
-            <img src="/red.jpg" alt="Red" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.innerHTML = '<span class="font-display text-xl font-bold text-white">R</span>' }} />
+            <span aria-hidden="true" className="font-display text-xl font-bold text-white">R</span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -164,6 +167,9 @@ function ChatWidget() {
       <AnimatePresence>
         {open && (
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="red-chat-title"
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -173,18 +179,18 @@ function ChatWidget() {
             {/* Header */}
             <div className="flex-shrink-0 border-b border-border px-4 py-3 flex items-center justify-between bg-surface-1">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full overflow-hidden bg-accent flex-shrink-0">
-                  <img src="/red.jpg" alt="Red" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center"><span class="font-display text-base font-bold text-white">R</span></div>' }} />
+                <div aria-hidden="true" className="w-9 h-9 rounded-full bg-accent flex-shrink-0 flex items-center justify-center">
+                  <span className="font-display text-base font-bold text-white">R</span>
                 </div>
                 <div>
-                  <h3 className="text-sm font-display font-semibold text-text-primary">Red</h3>
-                  <p className="text-[10px] text-gold flex items-center gap-1">
+                  <h3 id="red-chat-title" className="text-sm font-display font-semibold text-text-primary">Red</h3>
+                  <span className="text-[10px] text-gold flex items-center gap-1">
                     <span className="w-1 h-1 rounded-full bg-gold inline-block" />
                     Online
-                  </p>
+                  </span>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} className="text-text-tertiary hover:text-text-primary text-lg leading-none px-1">&times;</button>
+              <button type="button" aria-label="Close Red chat" onClick={() => setOpen(false)} className="text-text-tertiary hover:text-text-primary text-lg leading-none px-1">&times;</button>
             </div>
 
             {/* Messages */}
@@ -226,7 +232,7 @@ function ChatWidget() {
               <div className="flex-shrink-0 px-3 pb-1.5">
                 <div className="flex flex-wrap gap-1.5">
                   {QUICK_ACTIONS.map((a) => (
-                    <button key={a} onClick={() => sendMessage(a)}
+                    <button type="button" key={a} onClick={() => sendMessage(a)}
                       className="text-[11px] px-2.5 py-1 rounded-full border border-border text-text-secondary hover:text-text-primary hover:border-accent/40 transition-all font-body">
                       {a}
                     </button>
@@ -238,7 +244,10 @@ function ChatWidget() {
             {/* Input */}
             <div className="flex-shrink-0 border-t border-border p-2.5">
               <form onSubmit={(e) => { e.preventDefault(); sendMessage(input) }} className="flex gap-2">
+                <label htmlFor="red-chat-input" className="sr-only">Message Red</label>
                 <input
+                  id="red-chat-input"
+                  name="message"
                   ref={inputRef}
                   type="text"
                   value={input}
@@ -266,6 +275,11 @@ export default function HomePage() {
   return (
     <>
       <Head>
+        <title>RedMart | Community Marketplace</title>
+        <meta
+          name="description"
+          content="Explore RedMart, an open-source community marketplace prototype with a local catalog, demand board, and conversational product helper."
+        />
         <link rel="canonical" href={`${SITE_URL}/`} />
         <script
           type="application/ld+json"
@@ -276,8 +290,8 @@ export default function HomePage() {
       {/* Nav */}
       <nav className="border-b border-border px-5 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full overflow-hidden bg-accent shadow-md shadow-black/30 flex-shrink-0">
-            <img src="/red.jpg" alt="Red" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center"><span class="font-display text-base font-bold text-white">R</span></div>' }} />
+          <div aria-hidden="true" className="w-9 h-9 rounded-full bg-accent shadow-md shadow-black/30 flex-shrink-0 flex items-center justify-center">
+            <span className="font-display text-base font-bold text-white">R</span>
           </div>
           <span className="font-display text-lg font-semibold tracking-wide">RedMart</span>
         </div>
@@ -295,8 +309,8 @@ export default function HomePage() {
       <section className="px-5 pt-16 pb-12 max-w-3xl mx-auto text-center">
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           {/* Red portrait */}
-          <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-6 border-2 border-accent/30 shadow-xl shadow-black/40">
-            <img src="/red.jpg" alt="Red" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-accent to-accent-light flex items-center justify-center"><span class="font-display text-3xl font-bold text-white">R</span></div>' }} />
+          <div aria-hidden="true" className="w-24 h-24 rounded-full mx-auto mb-6 border-2 border-accent/30 shadow-xl shadow-black/40 bg-gradient-to-br from-accent to-accent-light flex items-center justify-center">
+            <span className="font-display text-3xl font-bold text-white">R</span>
           </div>
 
           <h1 className="font-display text-3xl md:text-4xl font-bold leading-tight tracking-tight">
@@ -304,11 +318,11 @@ export default function HomePage() {
             <span className="text-accent-light italic">Red can get it.</span>
           </h1>
           <p className="mt-4 text-text-secondary text-base max-w-lg mx-auto leading-relaxed">
-            The community marketplace for Network State.
-            Tell Red what you need. He&rsquo;ll find it.
+            RedMart brings a catalog, demand board, and conversational product helper together for the Network State community. Browse the current prototype, tell Red what you need, or record a request for vendors to consider.
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
             <button
+              type="button"
               onClick={() => window.dispatchEvent(new CustomEvent('open-red-chat'))}
               className="bg-accent text-white font-display font-semibold text-sm px-7 py-3 rounded-xl hover:bg-accent-light transition-colors shadow-lg shadow-black/30"
             >
@@ -331,8 +345,8 @@ export default function HomePage() {
       {/* Products Grid */}
       <section className="px-5 py-10 max-w-5xl mx-auto">
         <div className="flex items-baseline justify-between mb-5">
-          <h2 className="font-display text-xl font-semibold">Available Now</h2>
-          <span className="text-xs text-text-tertiary">{PRODUCTS.length} items from {new Set(PRODUCTS.map(p => p.vendor)).size} vendors</span>
+          <h2 className="font-display text-xl font-semibold">Catalog Preview</h2>
+          <span className="text-xs text-text-tertiary">{PRODUCTS.length} sample items across {new Set(PRODUCTS.map(p => p.vendor)).size} vendor profiles</span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {PRODUCTS.map((p, i) => (
@@ -341,7 +355,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: i * 0.04 }}
-              className="bg-surface-1 border border-border rounded-xl p-4 hover:border-border-hover transition-colors group cursor-pointer"
+              className="bg-surface-1 border border-border rounded-xl p-4 hover:border-border-hover transition-colors group"
             >
               <div className="flex items-start justify-between gap-1 mb-1">
                 <h3 className="text-sm font-display font-medium text-text-primary leading-snug group-hover:text-white transition-colors">{p.name}</h3>
@@ -351,8 +365,8 @@ export default function HomePage() {
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-text-tertiary">{p.vendor}</p>
-              <p className="text-sm font-semibold text-gold mt-2">{p.price}</p>
+              <div className="text-[11px] text-text-tertiary">{p.vendor}</div>
+              <div className="text-sm font-semibold text-gold mt-2">{p.price}</div>
             </motion.div>
           ))}
         </div>
@@ -366,7 +380,7 @@ export default function HomePage() {
         <div className="flex items-baseline justify-between mb-5">
           <div>
             <h2 className="font-display text-xl font-semibold">Community Wants</h2>
-            <p className="text-xs text-text-tertiary mt-1">Don&rsquo;t see what you need? Request it. Red is listening.</p>
+            <div className="text-xs text-text-tertiary mt-1">Don&rsquo;t see what you need? Request it. Red is listening.</div>
           </div>
           <Link href="/demands" className="text-xs text-accent-light hover:underline">View all &rarr;</Link>
         </div>
@@ -386,7 +400,7 @@ export default function HomePage() {
                 <span className="text-sm font-semibold text-text-secondary">{d.votes}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-display font-medium text-text-primary truncate">{d.item}</p>
+                <div className="text-sm font-display font-medium text-text-primary truncate">{d.item}</div>
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${
                   d.status === 'sourcing'
                     ? 'bg-gold/10 text-gold border-gold/20'
@@ -400,6 +414,22 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* About the prototype */}
+      <div className="max-w-5xl mx-auto px-5">
+        <div className="border-t border-border" />
+      </div>
+      <section className="px-5 py-10 max-w-3xl mx-auto" aria-labelledby="about-redmart">
+        <h2 id="about-redmart" className="font-display text-xl font-semibold mb-5 text-center">A marketplace shaped by real requests</h2>
+        <div className="space-y-4 text-sm text-text-secondary leading-relaxed">
+          <p>
+            RedMart is an open-source community marketplace prototype for Network State residents in Malaysia. The site combines a small catalog, a public demand board, and a conversational helper so visitors can explore example supply and signal which goods they want local vendors to source.
+          </p>
+          <p>
+            The current catalog contains {PRODUCTS.length} sample listings across {new Set(PRODUCTS.map(p => p.vendor)).size} example vendor profiles, with prices displayed in Malaysian ringgit. Demand-board requests and votes are stored locally in the visitor&rsquo;s browser, while the Red chat sends the text a visitor submits to an AI service to generate a response.
+          </p>
+        </div>
+      </section>
+
       {/* How it works */}
       <div className="max-w-5xl mx-auto px-5">
         <div className="border-t border-border" />
@@ -410,17 +440,17 @@ export default function HomePage() {
           <div className="text-center">
             <div className="text-2xl mb-2">1</div>
             <h3 className="font-display font-semibold text-sm mb-1">Tell Red</h3>
-            <p className="text-xs text-text-tertiary leading-relaxed">Ask Red what you need. He searches the inventory and finds matches.</p>
+            <p className="text-xs text-text-tertiary leading-relaxed">A community request starts with a plain description of the item, budget, or use case. Red compares that request with the catalog entries available to the prototype.</p>
           </div>
           <div className="text-center">
             <div className="text-2xl mb-2">2</div>
             <h3 className="font-display font-semibold text-sm mb-1">Red finds it</h3>
-            <p className="text-xs text-text-tertiary leading-relaxed">If it&rsquo;s in stock, Red connects you to the vendor. If not, he logs the demand.</p>
+            <p className="text-xs text-text-tertiary leading-relaxed">Red returns a catalog match when one exists and can point visitors toward the demand board when no listing fits. The prototype does not claim unavailable inventory.</p>
           </div>
           <div className="text-center">
             <div className="text-2xl mb-2">3</div>
             <h3 className="font-display font-semibold text-sm mb-1">You get it</h3>
-            <p className="text-xs text-text-tertiary leading-relaxed">Buy directly from the vendor. No middleman. No markup. Community commerce.</p>
+            <p className="text-xs text-text-tertiary leading-relaxed">Each listing shows its stated price and vendor profile so a visitor can evaluate the next step. RedMart does not currently process payments or complete transactions on this page.</p>
           </div>
         </div>
       </section>
@@ -429,7 +459,7 @@ export default function HomePage() {
       <section className="px-5 py-12 text-center">
         <div className="max-w-md mx-auto">
           <h2 className="font-display text-2xl font-bold mb-2">Got something to sell?</h2>
-          <p className="text-text-secondary text-sm mb-6">List your goods for the NS community. No fees. No middleman.</p>
+          <p className="text-text-secondary text-sm mb-6">Community sellers can preview the vendor onboarding flow and describe the goods they want to offer. The current prototype keeps that form in the browser and does not publish a listing automatically.</p>
           <Link href="/sell" className="bg-accent text-white font-display font-semibold text-sm px-7 py-3 rounded-xl hover:bg-accent-light transition-colors shadow-lg shadow-black/30 inline-block">
             Start Selling
           </Link>
@@ -438,9 +468,14 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-border px-5 py-6 text-center">
-        <p className="text-xs text-text-tertiary font-body">
-          RedMart &mdash; Community commerce for Network State
-        </p>
+        <nav aria-label="Site information" className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-text-secondary mb-3">
+          <Link href="/about" className="hover:text-text-primary">About</Link>
+          <Link href="/contact" className="hover:text-text-primary">Contact</Link>
+          <Link href="/privacy" className="hover:text-text-primary">Privacy</Link>
+        </nav>
+        <span className="text-xs text-text-tertiary font-body">
+          RedMart &mdash; an open-source community marketplace prototype
+        </span>
       </footer>
 
       {/* Chat Widget */}

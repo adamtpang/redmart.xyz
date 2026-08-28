@@ -10,6 +10,7 @@ interface SelectProps {
 export default function Select({ options, value, onChange, placeholder }: SelectProps) {
   return (
     <select
+      aria-label={placeholder || 'Select an option'}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       className="bg-surface-2 border border-border rounded-md px-3 py-1.5 text-sm text-text-primary

@@ -145,7 +145,7 @@ export default function ProductsPage() {
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-surface-2 rounded border border-border flex items-center justify-center text-text-tertiary text-xs">
             {row.featured_image_url ? (
-              <img src={row.featured_image_url} alt="" className="w-full h-full object-cover rounded" />
+              <img src={row.featured_image_url} alt={`${row.title} product`} width="32" height="32" className="w-full h-full object-cover rounded" />
             ) : (
               row.title.charAt(0)
             )}
@@ -203,7 +203,10 @@ export default function ProductsPage() {
       <Card>
         {/* Search + Tabs */}
         <div className="mb-4">
+          <label htmlFor="product-search" className="sr-only">Search products</label>
           <input
+            id="product-search"
+            name="product-search"
             type="text"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}

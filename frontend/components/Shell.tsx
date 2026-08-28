@@ -60,10 +60,12 @@ export default function Shell({ title, children }: ShellProps) {
           <span className="text-sm font-semibold text-text-primary">{title}</span>
         </div>
         <button
+          type="button"
+          aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="p-1.5 rounded-md hover:bg-surface-2 transition-colors"
         >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-text-secondary">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-text-secondary">
             {mobileMenuOpen ? (
               <path d="M5 5l10 10M15 5l-10 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             ) : (

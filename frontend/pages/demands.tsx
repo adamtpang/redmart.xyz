@@ -116,8 +116,8 @@ export default function DemandsPage() {
       {/* Nav */}
       <nav className="border-b border-border px-5 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full overflow-hidden bg-accent shadow-md shadow-black/30 flex-shrink-0">
-            <img src="/red.jpg" alt="Red" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center"><span class="font-display text-base font-bold text-white">R</span></div>' }} />
+          <div aria-hidden="true" className="w-9 h-9 rounded-full bg-accent shadow-md shadow-black/30 flex-shrink-0 flex items-center justify-center">
+            <span className="font-display text-base font-bold text-white">R</span>
           </div>
           <span className="font-display text-lg font-semibold tracking-wide">RedMart</span>
         </Link>
@@ -134,6 +134,7 @@ export default function DemandsPage() {
           <p className="text-xs text-text-tertiary mt-1">What NS needs. Red is listening.</p>
         </div>
         <button
+          type="button"
           onClick={() => setShowForm(!showForm)}
           className="bg-accent text-white text-sm font-display font-semibold px-4 py-2 rounded-xl hover:bg-accent-light transition-colors"
         >
@@ -169,14 +170,20 @@ export default function DemandsPage() {
           >
             <form onSubmit={handleSubmit} className="px-5 pb-4 space-y-3">
               <div className="bg-surface-1 border border-border rounded-xl p-4 space-y-3">
+                <label htmlFor="demand-item" className="sr-only">Requested item</label>
                 <input
+                  id="demand-item"
+                  name="item"
                   type="text"
                   value={newItem}
                   onChange={(e) => setNewItem(e.target.value)}
                   placeholder="What do you need? (e.g. Reef-safe sunscreen)"
                   className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent/50"
                 />
+                <label htmlFor="demand-details" className="sr-only">Request details</label>
                 <input
+                  id="demand-details"
+                  name="details"
                   type="text"
                   value={newDesc}
                   onChange={(e) => setNewDesc(e.target.value)}
@@ -216,11 +223,13 @@ export default function DemandsPage() {
           >
             {/* Vote button */}
             <button
+              type="button"
+              aria-label={voted.has(demand.id) ? `Already voted for ${demand.item}` : `Vote for ${demand.item}`}
               onClick={() => handleVote(demand.id)}
               disabled={voted.has(demand.id)}
               className={`flex flex-col items-center gap-0.5 min-w-[40px] group ${voted.has(demand.id) ? 'cursor-default' : 'cursor-pointer'}`}
             >
-              <svg width="16" height="10" viewBox="0 0 16 10" className={`transition-colors ${voted.has(demand.id) ? 'text-accent-light' : 'text-text-tertiary group-hover:text-accent-light'}`}>
+              <svg aria-hidden="true" width="16" height="10" viewBox="0 0 16 10" className={`transition-colors ${voted.has(demand.id) ? 'text-accent-light' : 'text-text-tertiary group-hover:text-accent-light'}`}>
                 <path d="M8 0L15 10H1L8 0Z" fill="currentColor" />
               </svg>
               <span className={`text-sm font-semibold transition-colors ${voted.has(demand.id) ? 'text-accent-light' : 'text-text-secondary group-hover:text-accent-light'}`}>
@@ -253,8 +262,8 @@ export default function DemandsPage() {
           href="/"
           className="bg-accent text-white text-sm font-display font-semibold pl-3 pr-4 py-2.5 rounded-full shadow-lg shadow-black/40 hover:bg-accent-light transition-colors flex items-center gap-2"
         >
-          <div className="w-6 h-6 rounded-full overflow-hidden bg-white/20 flex-shrink-0">
-            <img src="/red.jpg" alt="Red" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center"><span class="text-xs font-bold">R</span></div>' }} />
+          <div aria-hidden="true" className="w-6 h-6 rounded-full bg-white/20 flex-shrink-0 flex items-center justify-center">
+            <span className="text-xs font-bold">R</span>
           </div>
           Ask Red
         </Link>

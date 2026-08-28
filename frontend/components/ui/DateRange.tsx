@@ -21,6 +21,7 @@ export default function DateRange({
     <div className="flex items-center gap-1 rounded-lg bg-surface-1 p-1">
       {options.map((opt) => (
         <button
+          type="button"
           key={opt.value}
           onClick={() => onChange(opt.value)}
           className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${

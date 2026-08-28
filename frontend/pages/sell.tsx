@@ -41,8 +41,8 @@ export default function SellPage() {
       {/* Nav */}
       <nav className="border-b border-border px-5 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full overflow-hidden bg-accent shadow-md shadow-black/30 flex-shrink-0">
-            <img src="/red.jpg" alt="Red" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center"><span class="font-display text-base font-bold text-white">R</span></div>' }} />
+          <div aria-hidden="true" className="w-9 h-9 rounded-full bg-accent shadow-md shadow-black/30 flex-shrink-0 flex items-center justify-center">
+            <span className="font-display text-base font-bold text-white">R</span>
           </div>
           <span className="font-display text-lg font-semibold tracking-wide">RedMart</span>
         </Link>
@@ -84,11 +84,13 @@ export default function SellPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <label className="block text-lg font-display font-semibold mb-3">
+                <label htmlFor={`seller-${steps[step].field}`} className="block text-lg font-display font-semibold mb-3">
                   {steps[step].question}
                 </label>
                 {steps[step].field === 'products' ? (
                   <textarea
+                    id={`seller-${steps[step].field}`}
+                    name={steps[step].field}
                     value={form[steps[step].field]}
                     onChange={(e) => setForm({ ...form, [steps[step].field]: e.target.value })}
                     placeholder={steps[step].placeholder}
@@ -98,6 +100,8 @@ export default function SellPage() {
                   />
                 ) : (
                   <input
+                    id={`seller-${steps[step].field}`}
+                    name={steps[step].field}
                     type="text"
                     value={form[steps[step].field]}
                     onChange={(e) => setForm({ ...form, [steps[step].field]: e.target.value })}
