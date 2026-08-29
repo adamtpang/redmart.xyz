@@ -487,6 +487,7 @@ export default function HomePage() {
               <a href="#product" className="nav-item text-sm text-text-secondary transition-colors hover:text-text-primary">Product</a>
               <a href="#workflow" className="nav-item text-sm text-text-secondary transition-colors hover:text-text-primary">How it works</a>
               <a href="#channels" className="nav-item text-sm text-text-secondary transition-colors hover:text-text-primary">Channels</a>
+              <Link href="/dashboard" className="nav-item text-sm text-text-secondary transition-colors hover:text-text-primary">Dashboard</Link>
               <a href="#faq" className="nav-item text-sm text-text-secondary transition-colors hover:text-text-primary">FAQ</a>
             </div>
             <a href="#product" className={cn(buttonVariants({ size: 'sm' }), 'font-display font-semibold')}>
@@ -538,9 +539,9 @@ export default function HomePage() {
                     See Red in action
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </a>
-                  <a href="#workflow" className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'w-full font-display font-semibold sm:w-auto')}>
-                    Explore the workflow
-                  </a>
+                  <Link href="/dashboard" className={cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'w-full font-display font-semibold sm:w-auto')}>
+                    Open dashboard
+                  </Link>
                 </div>
                 <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] text-text-tertiary">
                   <span className="flex items-center gap-1.5"><CircleCheck className="h-3.5 w-3.5 text-gold" aria-hidden="true" />Goods and services</span>
