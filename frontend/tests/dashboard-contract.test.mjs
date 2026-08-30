@@ -13,6 +13,16 @@ test('dashboard requires review and prepares copy without a messaging request', 
   assert.doesNotMatch(dashboard, /fetch\(|axios|\/api\/.*send/i)
 })
 
+test('dashboard carries the latest sales brief and pricing decision', () => {
+  assert.match(dashboard, /30 Aug, 7:46 PM SGT/)
+  assert.match(dashboard, /Credible money/)
+  assert.match(dashboard, /RM590/)
+  assert.match(dashboard, /Murtaza offered the full RM190/)
+  assert.match(dashboard, /Amazon Echo: RM130 to RM120/)
+  assert.match(dashboard, /14 active/)
+  assert.doesNotMatch(dashboard, /—/)
+})
+
 test('homepage links to the dashboard and the former route redirects', () => {
   assert.match(homepage, /href="\/dashboard"/)
   assert.match(marketplaceRedirect, /destination: '\/dashboard'/)

@@ -26,6 +26,27 @@ interactive product preview with tabs for adjacent product surfaces.
 RedMart preserves its own editorial visual identity instead of copying
 Tailark's palette or demo content.
 
+### Marketplace dashboard
+
+The `/dashboard` route is built against the information architecture of
+[shadcn dashboard-01](https://ui.shadcn.com/blocks#dashboard-01). It borrows a
+compact left rail, executive KPI row, dominant priority card, ranked action
+cards, and a dense pipeline table. RedMart's burgundy, gold, serif typography,
+and dark editorial surfaces remain unchanged.
+
+Dashboard component families:
+
+- Badge for monitor, urgency, and pipeline states
+- Button for section navigation and copy-only actions
+- Card for KPI, priority, action, pricing, and attention surfaces
+- Dialog for the required reply review confirmation
+- Separator for compact report grouping
+
+Dashboard density follows a 4px rhythm. Currency values use tabular numerals.
+Tables may scroll inside their own card on narrow screens, while the page
+itself must not overflow horizontally. Person-to-person actions are always
+copy-only: Red prepares the draft, and Adam sends it manually in Helium.
+
 ## Brand tokens
 
 | Role | Token | Value |
@@ -84,6 +105,20 @@ Verified against the production build in a clean headless Helium profile:
 | Reddit tab | Passed |
 | Facebook Groups tab | Passed |
 | Facebook Marketplace tab | Passed |
+
+Dashboard verification, 2026-08-30:
+
+| Check | Result |
+| --- | --- |
+| TypeScript | Passed |
+| Contract tests | 7 of 7 passed |
+| ESLint | 0 errors, 29 pre-existing warnings |
+| Next.js production build | Passed |
+| Dashboard route | Statically rendered |
+| Unapproved messaging requests | 0 |
+| Em dashes in dashboard source | 0 |
+| Latest report snapshot | 30 Aug, 7:46 PM SGT |
+| Helium visual and keyboard pass | Awaiting one-time remote-debugging approval |
 
 Visual captures:
 
