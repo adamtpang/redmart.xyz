@@ -58,6 +58,10 @@ Agent interaction model:
 - The price watcher can be enabled or disabled and proposes a reduction after
   72 hours with no buyer signal and at least 25 clicks.
 - All 14 listings remain visible in the report, including quiet items.
+- Live listings are sorted by asking price from high to low.
+- Tim's separate 59-item inventory stays owner-scoped and collapsible so the
+  dashboard remains concise. It is sorted by historical purchase price from
+  high to low and never treats purchase cost as a resale recommendation.
 
 Marketplace money model:
 
@@ -85,6 +89,19 @@ Dashboard simplification, 2026-08-31:
 | Repeated decision inbox | Removed |
 | Approval interaction | Master-detail review and copy |
 | Person-to-person side effects | 0 |
+
+Tim inventory import, 2026-08-31:
+
+| Check | Result |
+| --- | --- |
+| Source | Public NS Apartment Items For Sale workbook, Items tab |
+| Tim-owned inventory rows | 59 |
+| Historical purchase total | RM35,706.98, USD8,864.52 from source sheet |
+| Already live item | TCL 98-inch TV |
+| Items still needing sale price | 58 |
+| Live listing sort | Asking price, high to low |
+| Tim inventory sort | Purchase price, high to low |
+| Invented resale prices | 0 |
 
 ## Brand tokens
 

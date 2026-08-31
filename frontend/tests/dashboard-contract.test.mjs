@@ -63,8 +63,19 @@ test('Red exposes a concise approval-driven operating model', () => {
   assert.match(component, /Approval means copy, never send/)
   assert.match(component, /72 hours with no buyer signal and 25\+ clicks/)
   assert.match(component, /Every listing edit still requires exact approval/)
-  assert.equal((data.match(/item: '/g) ?? []).length, 26)
   assert.equal((data.match(/onTableMyr: \d+/g) ?? []).length, 14)
+})
+
+test('Tim inventory is complete, owner-scoped, and sorted by purchase price', () => {
+  assert.equal((data.match(/purchaseMyr: \d+/g) ?? []).length, 59)
+  assert.match(data, /timInventoryTotalMyr = 35706\.98/)
+  assert.match(data, /timInventoryTotalUsd = 8864\.52/)
+  assert.match(component, /sort\(\(a, b\) => b\.purchaseMyr - a\.purchaseMyr\)/)
+  assert.match(component, /sort\(\(a, b\) => b\.asking - a\.asking\)/)
+  assert.match(component, /Show all 59 Tim-owned items/)
+  assert.match(component, /Historical purchase cost is context, not a resale recommendation/)
+  assert.match(component, /58 need pricing/)
+  assert.match(component, /Already listed/)
 })
 
 test('homepage links to the dashboard and the former route redirects', () => {

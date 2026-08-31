@@ -31,6 +31,9 @@ import {
   marketplacePipeline,
   myrPerUsd,
   snapshotLabel,
+  timInventory,
+  timInventoryTotalMyr,
+  timInventoryTotalUsd,
   type MarketplaceAction,
   type PipelineRow,
 } from '@/lib/marketplace-data'
@@ -114,6 +117,8 @@ export default function MarketplaceDashboard() {
   const priceWatcherEnabled = decisionStates['policy:price-watcher'] !== 'held'
   const firmOffers = marketplacePipeline.filter((item) => item.onTableMyr > 0)
   const credibleMoneyMyr = firmOffers.reduce((total, item) => total + item.onTableMyr, 0)
+  const sortedMarketplacePipeline = useMemo(() => [...marketplacePipeline].sort((a, b) => b.asking - a.asking), [])
+  const sortedTimInventory = useMemo(() => [...timInventory].sort((a, b) => b.purchaseMyr - a.purchaseMyr), [])
 
   const openReview = (action: MarketplaceAction) => {
     setReviewAction(action)
@@ -154,6 +159,7 @@ export default function MarketplaceDashboard() {
               <a className="flex min-h-[44px] items-center px-3 text-sm font-medium text-foreground" href="#brief">Brief</a>
               <a className="flex min-h-[44px] items-center px-3 text-sm text-muted-foreground hover:text-foreground" href="#next-move">Next move</a>
               <a className="flex min-h-[44px] items-center px-3 text-sm text-muted-foreground hover:text-foreground" href="#pipeline">Listings</a>
+              <a className="flex min-h-[44px] items-center px-3 text-sm text-muted-foreground hover:text-foreground" href="#tim-inventory">Tim</a>
               <a className="flex min-h-[44px] items-center px-3 text-sm text-muted-foreground hover:text-foreground" href="#pricing">Pricing</a>
             </nav>
             <div className="justify-self-end"><Badge variant="outline" className="h-7 border-[#4caf72]/35 bg-[#4caf72]/10 px-3 text-sm text-[#9ad8b0]"><Bot data-icon="inline-start" aria-hidden="true" />Approval mode</Badge></div>
@@ -190,7 +196,7 @@ export default function MarketplaceDashboard() {
               ))}
               <article className="rounded-2xl border border-border bg-card/85 p-5">
                 <div className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-xl border border-gold/20 bg-gold/10 text-gold"><Bot className="size-5" aria-hidden="true" /></span><div><p className="font-opsmono text-sm uppercase text-muted-foreground">Red status</p><strong className="block text-base">Hourly monitor active</strong></div></div>
-                <div className="mt-6 grid grid-cols-2 gap-4 border-t border-border pt-4"><div><span className="font-opsmono text-sm text-muted-foreground">Listings</span><strong className="mt-1 block font-opsmono text-xl">14</strong></div><div><span className="font-opsmono text-sm text-muted-foreground">To review</span><strong className="mt-1 block font-opsmono text-xl">{pendingApprovalCount}</strong></div></div>
+                <div className="mt-6 grid grid-cols-3 gap-3 border-t border-border pt-4"><div><span className="font-opsmono text-sm text-muted-foreground">Live</span><strong className="mt-1 block font-opsmono text-xl">14</strong></div><div><span className="font-opsmono text-sm text-muted-foreground">Tim</span><strong className="mt-1 block font-opsmono text-xl">59</strong></div><div><span className="font-opsmono text-sm text-muted-foreground">Review</span><strong className="mt-1 block font-opsmono text-xl">{pendingApprovalCount}</strong></div></div>
               </article>
             </div>
           </section>
@@ -234,10 +240,10 @@ export default function MarketplaceDashboard() {
           </section>
 
           <section id="pipeline" aria-labelledby="pipeline-heading" className="mt-14 scroll-mt-28">
-            <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(280px,0.45fr)] md:items-end"><div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.09em] text-gold">Listing ledger / 14</p><h2 id="pipeline-heading" className="mt-3 font-display text-[clamp(2.2rem,4vw,3.8rem)] font-semibold leading-none tracking-[-0.04em]">Every item. <span className="italic text-accent-light">One honest number.</span></h2></div><p className="text-base leading-7 text-muted-foreground">Cash now counts only a specific offer or agreed amount. Interest without a number stays at $0.00.</p></div>
+            <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(280px,0.45fr)] md:items-end"><div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.09em] text-gold">Live listing ledger / 14 · price high to low</p><h2 id="pipeline-heading" className="mt-3 font-display text-[clamp(2.2rem,4vw,3.8rem)] font-semibold leading-none tracking-[-0.04em]">Every item. <span className="italic text-accent-light">One honest number.</span></h2></div><p className="text-base leading-7 text-muted-foreground">Cash now counts only a specific offer or agreed amount. Interest without a number stays at $0.00.</p></div>
             <div className="mt-7 rounded-2xl border border-border bg-card/70 shadow-2xl shadow-black/15">
               <div className="hidden min-h-12 grid-cols-[minmax(190px,1.25fr)_90px_120px_minmax(220px,1.35fr)_140px] items-center gap-4 border-b border-border px-4 font-opsmono text-sm uppercase tracking-[0.04em] text-muted-foreground xl:grid"><span>Item</span><span>Asking</span><span>Cash now</span><span>Best signal</span><span className="text-right">Next</span></div>
-              {marketplacePipeline.map((row, index) => (
+              {sortedMarketplacePipeline.map((row, index) => (
                 <article key={row.item} className="grid grid-cols-2 gap-x-5 gap-y-4 border-b border-border px-4 py-5 transition-colors last:border-b-0 hover:bg-card xl:min-h-[68px] xl:grid-cols-[minmax(190px,1.25fr)_90px_120px_minmax(220px,1.35fr)_140px] xl:items-center xl:gap-4 xl:py-3">
                   <div className="col-span-2 xl:col-span-1"><span className="mb-1 block font-opsmono text-sm uppercase text-muted-foreground xl:hidden">Item</span><div className="flex items-center gap-3"><span className="font-opsmono text-sm text-gold">{String(index + 1).padStart(2, '0')}</span><strong className="font-display text-base font-semibold">{row.item}</strong></div></div>
                   <div><span className="mb-1 block font-opsmono text-sm uppercase text-muted-foreground xl:hidden">Asking</span><span className="font-opsmono text-base font-medium tabular-nums">RM{row.asking.toLocaleString()}</span></div>
@@ -247,6 +253,37 @@ export default function MarketplaceDashboard() {
                 </article>
               ))}
             </div>
+          </section>
+
+          <section id="tim-inventory" aria-labelledby="tim-inventory-heading" className="mt-14 scroll-mt-28">
+            <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(300px,0.48fr)] md:items-end">
+              <div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.09em] text-gold">Tim inventory / 59 · purchase price high to low</p><h2 id="tim-inventory-heading" className="mt-3 font-display text-[clamp(2.2rem,4vw,3.8rem)] font-semibold leading-none tracking-[-0.04em]">Everything Tim bought. <span className="italic text-accent-light">Ready to price.</span></h2></div>
+              <p className="text-base leading-7 text-muted-foreground">Historical purchase cost is context, not a resale recommendation. The TV is already listed. The other 58 items still need condition, photos, and an approved asking price.</p>
+            </div>
+
+            <div className="mt-7 grid gap-4 sm:grid-cols-2">
+              <article className="rounded-2xl border border-border bg-card/85 p-5"><p className="font-opsmono text-sm uppercase tracking-[0.06em] text-muted-foreground">Historical purchase total</p><strong className="mt-3 block font-opsmono text-3xl font-medium tabular-nums text-gold">${timInventoryTotalUsd.toLocaleString('en-US', { minimumFractionDigits: 2 })}</strong><span className="mt-2 block font-opsmono text-sm tabular-nums text-muted-foreground">RM{timInventoryTotalMyr.toLocaleString('en-MY', { minimumFractionDigits: 2 })}</span></article>
+              <article className="rounded-2xl border border-border bg-card/85 p-5"><p className="font-opsmono text-sm uppercase tracking-[0.06em] text-muted-foreground">Listing readiness</p><div className="mt-3 flex items-end justify-between gap-4"><strong className="font-opsmono text-3xl font-medium tabular-nums">1 / 59</strong><Badge variant="outline" className="h-7 border-[#c9a84c]/35 bg-[#c9a84c]/10 px-3 text-sm text-[#e0c976]">58 need pricing</Badge></div><p className="mt-3 text-sm leading-6 text-muted-foreground">The TCL TV is already live. Every other item remains an inventory candidate.</p></article>
+            </div>
+
+            <details className="group mt-4 overflow-hidden rounded-2xl border border-border bg-card/70">
+              <summary className="flex min-h-[56px] cursor-pointer list-none items-center justify-between gap-4 px-5 font-semibold marker:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"><span>Show all 59 Tim-owned items</span><ChevronRight className="size-5 text-gold transition-transform group-open:rotate-90" aria-hidden="true" /></summary>
+              <div className="border-t border-border">
+                <div className="hidden min-h-12 grid-cols-[56px_minmax(220px,1.4fr)_130px_110px_150px] items-center gap-4 border-b border-border px-4 font-opsmono text-sm uppercase tracking-[0.04em] text-muted-foreground lg:grid"><span>#</span><span>Item</span><span>Room</span><span>Bought for</span><span className="text-right">Listing status</span></div>
+                {sortedTimInventory.map((row, index) => {
+                  const alreadyListed = row.item.startsWith('TCL 98-inch TV')
+                  return (
+                    <article key={`${row.room}-${row.item}-${row.purchaseMyr}`} className="grid grid-cols-[44px_minmax(0,1fr)] gap-x-3 gap-y-3 border-b border-border px-4 py-4 last:border-b-0 lg:min-h-[64px] lg:grid-cols-[56px_minmax(220px,1.4fr)_130px_110px_150px] lg:items-center lg:gap-4 lg:py-3">
+                      <span className="font-opsmono text-sm text-gold">{String(index + 1).padStart(2, '0')}</span>
+                      <div><strong className="font-display text-base font-semibold">{row.item}</strong><span className="mt-1 block text-sm text-muted-foreground lg:hidden">{row.room}</span></div>
+                      <span className="hidden text-sm text-muted-foreground lg:block">{row.room}</span>
+                      <div className="col-start-2 lg:col-start-auto"><strong className="block font-opsmono text-base tabular-nums">RM{row.purchaseMyr.toLocaleString('en-MY', { minimumFractionDigits: 2 })}</strong><span className="mt-1 block font-opsmono text-sm tabular-nums text-muted-foreground">${row.purchaseUsd.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span></div>
+                      <div className="col-start-2 lg:col-start-auto lg:text-right"><Badge variant="outline" className={cn('h-7 px-2.5 text-sm', alreadyListed ? statusStyles.Fresh : statusStyles.Watch)}>{alreadyListed ? 'Already listed' : 'Needs sale price'}</Badge></div>
+                    </article>
+                  )
+                })}
+              </div>
+            </details>
           </section>
 
           <section id="pricing" aria-labelledby="pricing-heading" className="mt-14 grid scroll-mt-28 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(300px,0.7fr)]">
