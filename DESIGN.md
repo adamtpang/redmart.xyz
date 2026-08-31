@@ -175,7 +175,8 @@ Approval-driven agent expansion, 2026-08-31:
 | Price watcher policy | 72 hours, 25 clicks, 24-hour cooldown |
 | All listing coverage | 14 of 14 |
 | Live connector status | Explicitly unavailable until Helium approval |
-| Production Shapeable rerun | Pending deployment |
+| Production Shapeable rerun | 20/20 checks passed, zero findings |
+| Production Shapeable audit ID | `audit-20260831053613` |
 
 Visual captures:
 
