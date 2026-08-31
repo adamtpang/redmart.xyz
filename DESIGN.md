@@ -28,17 +28,17 @@ Tailark's palette or demo content.
 
 ### Marketplace dashboard
 
-The `/dashboard` route is built against the public interface system of
-[Shapeable.art](https://shapeable.art). It borrows an evidence-first hierarchy,
-Space Grotesk and IBM Plex Mono typography, a border-led proof strip, one dark
-decision console, a ranked ledger, square corners, and responsive records that
-preserve every field without a wide table. RedMart maps Shapeable's structural
-principles onto its own burgundy and gold identity instead of copying its
-palette or assets.
+The `/dashboard` route is a direct extension of RedMart's own landing page.
+It uses the same oxblood canvas, warm ivory typography, burgundy actions, gold
+operational signals, Playfair Display headlines, Source Serif body copy, soft
+radii, and editorial pacing. The decision queue is denser than the marketing
+page, but it should still feel unmistakably like RedMart rather than a generic
+analytics product.
 
-The dashboard uses a scoped light operations theme so long lead and listing
-sessions remain legible. The public landing page keeps the original dark
-editorial theme.
+[Shapeable.art](https://shapeable.art) is used only as a mechanical quality
+audit for overflow, target size, content hierarchy, and accessibility. It is
+not a visual reference and its fonts, light palette, square corners, and grid
+styling must not be copied into RedMart.
 
 Dashboard component families:
 
@@ -86,8 +86,9 @@ Typography:
 
 Dashboard typography:
 
-- Interface: Space Grotesk
-- Operational labels and currency: IBM Plex Mono
+- Headlines: Playfair Display, including italic burgundy emphasis
+- Interface and explanatory copy: Source Serif 4
+- Compact operational metadata: IBM Plex Mono
 - Essential labels: 12px minimum
 
 ## Component system
@@ -199,6 +200,23 @@ Approval handoff refinement, 2026-08-31:
 | Production Shapeable audit ID | `audit-20260831070003` |
 | Production deployment ID | `dpl_EtP2b4pWVYBraFmzoWxVcSKQan2g` |
 | Code commit | `b8f12fe` |
+
+RedMart identity restoration, 2026-08-31:
+
+| Check | Result |
+| --- | --- |
+| Primary visual reference | RedMart landing page |
+| Shapeable role | Audit only, never art direction |
+| Dashboard background | Oxblood `#1A0A0A` |
+| Display typography | Playfair Display |
+| Body typography | Source Serif 4 |
+| Desktop horizontal overflow | None at 1440px |
+| Mobile horizontal overflow | None at 390px |
+| Mobile approval dialog | 362px wide inside a 390px viewport |
+| Minimum reviewed action height | 44px |
+| Keyboard focus | Visible 2px gold outline |
+| Contract tests | 9 of 9 passed |
+| Person-to-person side effects | 0 |
 
 Visual captures:
 

@@ -29,30 +29,34 @@ body {
 
 .dashboard-theme,
 .dashboard-dialog-theme {
-  --background: #eeece8;
-  --foreground: #171413;
-  --card: #faf9f6;
-  --card-foreground: #171413;
-  --popover: #faf9f6;
-  --popover-foreground: #171413;
+  --background: #1A0A0A;
+  --foreground: rgba(255,245,238,0.95);
+  --card: #241111;
+  --card-foreground: rgba(255,245,238,0.95);
+  --popover: #2A1518;
+  --popover-foreground: rgba(255,245,238,0.95);
   --primary: #8B2232;
-  --primary-foreground: #FFF8F1;
-  --secondary: #e4dfd9;
-  --secondary-foreground: #171413;
-  --muted: #e7e3dd;
-  --muted-foreground: #675f5c;
-  --accent: #f1e6e7;
-  --accent-foreground: #7c1f2e;
-  --destructive: #A5283C;
-  --destructive-foreground: #FFF8F1;
-  --border: #c7c2bb;
-  --input: #c7c2bb;
-  --ring: #8B2232;
-  --radius: 0.125rem;
+  --primary-foreground: #FFF5EE;
+  --secondary: #2E1818;
+  --secondary-foreground: rgba(255,245,238,0.95);
+  --muted: #2E1818;
+  --muted-foreground: rgba(255,245,238,0.65);
+  --accent: rgba(201,168,76,0.15);
+  --accent-foreground: #C9A84C;
+  --destructive: #C2344D;
+  --destructive-foreground: #FFF5EE;
+  --border: rgba(255,200,180,0.12);
+  --input: rgba(255,200,180,0.16);
+  --ring: #C9A84C;
+  --radius: 0.75rem;
 }
 
 .dashboard-theme {
-  color-scheme: light;
+  color-scheme: dark;
+  background-image:
+    radial-gradient(circle at 18% 0%, rgba(139,34,50,0.24), transparent 34rem),
+    radial-gradient(circle at 88% 18%, rgba(201,168,76,0.07), transparent 28rem);
+  background-attachment: fixed;
 }
 
 @media (prefers-reduced-motion: reduce) {
