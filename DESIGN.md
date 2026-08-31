@@ -31,14 +31,14 @@ Tailark's palette or demo content.
 The `/dashboard` route is a direct extension of RedMart's own landing page.
 It uses the same oxblood canvas, warm ivory typography, burgundy actions, gold
 operational signals, Playfair Display headlines, Source Serif body copy, soft
-radii, and editorial pacing. The decision queue is denser than the marketing
-page, but it should still feel unmistakably like RedMart rather than a generic
-analytics product.
+radii, and editorial pacing. The decision queue should feel unmistakably like
+RedMart without behaving like an analytics wall.
 
-[Shapeable.art](https://shapeable.art) is used only as a mechanical quality
-audit for overflow, target size, content hierarchy, and accessibility. It is
-not a visual reference and its fonts, light palette, square corners, and grid
-styling must not be copied into RedMart.
+[Shapeable.art](https://shapeable.art) is the dashboard's structural reference
+for restraint: one dominant answer, one next action, generous whitespace, thin
+dividers, flat surfaces, and detail disclosed only when requested. RedMart does
+not copy Shapeable's light palette or identity. It keeps its oxblood canvas,
+gold operational signals, burgundy actions, and Playfair editorial voice.
 
 Dashboard component families:
 
@@ -103,6 +103,23 @@ Tim inventory import, 2026-08-31:
 | Tim inventory sort | Purchase price, high to low |
 | Invented resale prices | 0 |
 
+Shapeable restraint pass, 2026-08-31:
+
+| Check | Result |
+| --- | --- |
+| Dominant answer | Credible USD total |
+| Simultaneous lead controls | One native selector |
+| Default expanded data sections | 0 of 3 |
+| Desktop rendered height | 1,677px at 1440 by 900 |
+| Mobile rendered height | 2,384px at 390 by 844 |
+| Desktop horizontal overflow | None |
+| Mobile horizontal overflow | None |
+| Visible targets below 44px | None |
+| Dashboard interface font | Space Grotesk |
+| Dashboard display font | Playfair Display |
+| Mobile approval dialog | 362px wide inside a 390px viewport |
+| Person-to-person side effects | 0 |
+
 ## Brand tokens
 
 | Role | Token | Value |
@@ -127,7 +144,7 @@ Typography:
 Dashboard typography:
 
 - Headlines: Playfair Display, including italic burgundy emphasis
-- Interface and explanatory copy: Source Serif 4
+- Interface and explanatory copy: Space Grotesk
 - Compact operational metadata: IBM Plex Mono
 - Essential labels: 12px minimum
 

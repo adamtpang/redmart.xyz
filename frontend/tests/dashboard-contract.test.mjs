@@ -42,20 +42,21 @@ test('dashboard carries the latest sales brief and pricing decision', () => {
 })
 
 test('dashboard preserves the RedMart editorial identity and responsive safeguards', () => {
-  assert.match(component, /font-body/)
+  assert.match(component, /font-ops/)
   assert.match(component, /font-display/)
   assert.match(component, /text-gold/)
-  assert.match(component, /on the table\./)
+  assert.match(component, /ready to close\./)
   assert.match(globals, /\.dashboard-theme[\s\S]*color-scheme: dark/)
-  assert.match(globals, /radial-gradient\(circle at 18% 0%/)
+  assert.doesNotMatch(globals, /\.dashboard-theme[\s\S]*radial-gradient/)
   assert.doesNotMatch(globals, /\.dashboard-theme[\s\S]*color-scheme: light/)
-  assert.match(component, /Every item\./)
-  assert.match(component, /One honest number\./)
+  assert.match(component, /Every item\. One honest number\./)
   assert.doesNotMatch(component, /<table/)
   assert.doesNotMatch(component, /text-\[(?:9|10|11)px\]/)
   assert.doesNotMatch(component, /min-h-11/)
   assert.match(component, /min-h-\[44px\]/)
   assert.match(component, /min-h-\[76px\]/)
+  assert.match(component, /Open only what you need\./)
+  assert.match(component, /<select/)
 })
 
 test('Red exposes a concise approval-driven operating model', () => {
