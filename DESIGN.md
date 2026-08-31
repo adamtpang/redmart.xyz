@@ -216,6 +216,11 @@ RedMart identity restoration, 2026-08-31:
 | Minimum reviewed action height | 44px |
 | Keyboard focus | Visible 2px gold outline |
 | Contract tests | 9 of 9 passed |
+| Next.js production build | Passed |
+| Production Shapeable audit | 21 of 21 checks passed, zero findings, 100/100 |
+| Production Shapeable audit ID | `audit-20260831073515` |
+| Production deployment ID | `dpl_ESmZunwHV6KDiWnDSPUfdNW5cx6Q` |
+| Code commit | `bcc112f` |
 | Person-to-person side effects | 0 |
 
 Visual captures:
