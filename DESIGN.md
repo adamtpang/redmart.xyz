@@ -1,6 +1,6 @@
 # RedMart Design System
 
-Updated: 2026-08-28
+Updated: 2026-08-31
 
 ## Product story
 
@@ -28,24 +28,30 @@ Tailark's palette or demo content.
 
 ### Marketplace dashboard
 
-The `/dashboard` route is built against the information architecture of
-[shadcn dashboard-01](https://ui.shadcn.com/blocks#dashboard-01). It borrows a
-compact left rail, executive KPI row, dominant priority card, ranked action
-cards, and a dense pipeline table. RedMart's burgundy, gold, serif typography,
-and dark editorial surfaces remain unchanged.
+The `/dashboard` route is built against the public interface system of
+[Shapeable.art](https://shapeable.art). It borrows an evidence-first hierarchy,
+Space Grotesk and IBM Plex Mono typography, a border-led proof strip, one dark
+decision console, a ranked ledger, square corners, and responsive records that
+preserve every field without a wide table. RedMart maps Shapeable's structural
+principles onto its own burgundy and gold identity instead of copying its
+palette or assets.
+
+The dashboard uses a scoped light operations theme so long lead and listing
+sessions remain legible. The public landing page keeps the original dark
+editorial theme.
 
 Dashboard component families:
 
 - Badge for monitor, urgency, and pipeline states
 - Button for section navigation and copy-only actions
-- Card for KPI, priority, action, pricing, and attention surfaces
+- A master-detail action console instead of a grid of repeated action cards
 - Dialog for the required reply review confirmation
-- Separator for compact report grouping
+- Responsive listing records instead of a horizontally scrolling table
 
 Dashboard density follows a 4px rhythm. Currency values use tabular numerals.
-Tables may scroll inside their own card on narrow screens, while the page
-itself must not overflow horizontally. Person-to-person actions are always
-copy-only: Red prepares the draft, and Adam sends it manually in Helium.
+Essential text is never smaller than 12px and visible targets are at least
+44px tall. Person-to-person actions are always copy-only: Red prepares the
+draft, and Adam sends it manually in Helium.
 
 ## Brand tokens
 
@@ -67,6 +73,12 @@ Typography:
 - Display: Playfair Display
 - Body: Source Serif 4
 - Labels: uppercase, approximately 10px, with generous tracking
+
+Dashboard typography:
+
+- Interface: Space Grotesk
+- Operational labels and currency: IBM Plex Mono
+- Essential labels: 12px minimum
 
 ## Component system
 
@@ -118,6 +130,28 @@ Dashboard verification, 2026-08-30:
 | Unapproved messaging requests | 0 |
 | Em dashes in dashboard source | 0 |
 | Latest report snapshot | 30 Aug, 7:46 PM SGT |
+| Helium visual and keyboard pass | Awaiting one-time remote-debugging approval |
+
+Dashboard redesign verification, 2026-08-31:
+
+| Check | Result |
+| --- | --- |
+| Shapeable audit baseline | 5 findings, 2 high, 2 medium, 1 low |
+| Baseline off-screen mobile text | 65 elements |
+| Baseline tiny text | 161 mobile, 164 desktop |
+| TypeScript | Passed |
+| Contract tests | 8 of 8 passed |
+| ESLint | 0 errors, 29 pre-existing warnings |
+| Next.js production build | Passed |
+| Dashboard route | Statically rendered |
+| Wide pipeline table | Removed |
+| Essential text below 12px | Removed from dashboard source |
+| Interactive queue targets | 76px minimum |
+| Reduced-motion handling | Global zero-duration override added |
+| Unapproved messaging requests | 0 |
+| Em dashes in dashboard source | 0 |
+| Latest report snapshot | 31 Aug, 12:18 PM SGT |
+| Production Shapeable rerun | Pending deployment |
 | Helium visual and keyboard pass | Awaiting one-time remote-debugging approval |
 
 Visual captures:

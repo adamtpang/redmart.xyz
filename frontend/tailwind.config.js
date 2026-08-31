@@ -60,6 +60,8 @@ module.exports = {
       fontFamily: {
         display: ['"Playfair Display"', 'Georgia', 'serif'],
         body: ['"Source Serif 4"', 'Georgia', 'serif'],
+        ops: ['"Space Grotesk"', 'Arial', 'sans-serif'],
+        opsmono: ['"IBM Plex Mono"', 'Consolas', 'monospace'],
       },
     },
   },

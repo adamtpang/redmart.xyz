@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -26,6 +26,49 @@ body {
 
 /* Utility */
 .transition-default { transition: all 150ms ease-out; }
+
+.dashboard-theme,
+.dashboard-dialog-theme {
+  --background: #eeece8;
+  --foreground: #171413;
+  --card: #faf9f6;
+  --card-foreground: #171413;
+  --popover: #faf9f6;
+  --popover-foreground: #171413;
+  --primary: #8B2232;
+  --primary-foreground: #FFF8F1;
+  --secondary: #e4dfd9;
+  --secondary-foreground: #171413;
+  --muted: #e7e3dd;
+  --muted-foreground: #675f5c;
+  --accent: #f1e6e7;
+  --accent-foreground: #7c1f2e;
+  --destructive: #A5283C;
+  --destructive-foreground: #FFF8F1;
+  --border: #c7c2bb;
+  --input: #c7c2bb;
+  --ring: #8B2232;
+  --radius: 0.125rem;
+}
+
+.dashboard-theme {
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+  }
+}
 
 @layer base {
   :root, .dark {

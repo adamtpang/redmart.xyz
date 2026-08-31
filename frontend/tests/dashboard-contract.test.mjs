@@ -14,13 +14,21 @@ test('dashboard requires review and prepares copy without a messaging request', 
 })
 
 test('dashboard carries the latest sales brief and pricing decision', () => {
-  assert.match(dashboard, /30 Aug, 7:46 PM SGT/)
-  assert.match(dashboard, /Credible money/)
+  assert.match(dashboard, /31 Aug, 12:18 PM SGT/)
+  assert.match(dashboard, /credible money/)
   assert.match(dashboard, /RM590/)
-  assert.match(dashboard, /Murtaza offered the full RM190/)
+  assert.match(dashboard, /Accept RM190 and lock a pickup time/)
   assert.match(dashboard, /Amazon Echo: RM130 to RM120/)
-  assert.match(dashboard, /14 active/)
+  assert.match(dashboard, /active listings/)
   assert.doesNotMatch(dashboard, /—/)
+})
+
+test('dashboard implements the Shapeable responsive and type fixes', () => {
+  assert.match(dashboard, /font-ops/)
+  assert.match(dashboard, /Every item\. Nothing hidden\./)
+  assert.doesNotMatch(dashboard, /<table/)
+  assert.doesNotMatch(dashboard, /text-\[(?:9|10|11)px\]/)
+  assert.match(dashboard, /min-h-\[76px\]/)
 })
 
 test('homepage links to the dashboard and the former route redirects', () => {
