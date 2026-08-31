@@ -406,8 +406,8 @@ export default function DashboardPage() {
 
             <div className="mt-10 grid overflow-hidden rounded-2xl border border-border bg-surface-1/75 shadow-2xl shadow-black/15 sm:grid-cols-2 xl:grid-cols-4" aria-label="Current Marketplace totals">
               {proof.map((item, index) => (
-                <div key={item.label} className={cn('flex min-h-[92px] items-baseline gap-3 py-5 sm:px-5 xl:px-6', index > 0 && 'border-t sm:border-t-0', index > 1 && 'sm:border-t xl:border-t-0', index % 2 === 1 && 'sm:border-l', index > 0 && 'xl:border-l')}>
-                  <strong className="font-opsmono text-2xl font-medium tabular-nums">{item.value}</strong>
+                <div key={item.label} className={cn('grid min-h-[92px] grid-cols-[auto_minmax(0,1fr)] items-start gap-4 px-5 py-5 xl:px-6', index > 0 && 'border-t sm:border-t-0', index > 1 && 'sm:border-t xl:border-t-0', index % 2 === 1 && 'sm:border-l', index > 0 && 'xl:border-l')}>
+                  <strong className="mt-0.5 min-w-10 font-opsmono text-2xl font-medium tabular-nums">{item.value}</strong>
                   <span><span className="block text-base font-medium">{item.label}</span><span className="mt-1 block text-sm text-muted-foreground">{item.detail}</span></span>
                 </div>
               ))}
