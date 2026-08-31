@@ -43,6 +43,7 @@ type Action = {
   buyer: string
   ask: number
   offer?: number
+  approvalValue?: number
   signal: string
   move: string
   reason: string
@@ -73,7 +74,7 @@ type ApprovalItem = {
   actionId?: string
 }
 
-const snapshotLabel = '31 Aug, 1:59 PM SGT'
+const snapshotLabel = '31 Aug, 2:31 PM SGT'
 
 const actions: Action[] = [
   {
@@ -98,6 +99,7 @@ const actions: Action[] = [
     buyer: 'Ahmad',
     ask: 490,
     offer: 400,
+    approvalValue: 450,
     signal: 'Specific RM400 offer',
     move: 'Counter once at RM450',
     urgency: 'Now',
@@ -136,8 +138,22 @@ const actions: Action[] = [
     draft: 'Hi Anand, yes, the M-Audio speaker pair is available for RM200. Pickup is at Forest City Marina Hotel. What day and exact time can you collect?',
   },
   {
-    id: 'mohd-bike',
+    id: 'hamka-cajon',
     rank: 5,
+    item: 'Cajon Bundle',
+    buyer: 'Hamka',
+    ask: 140,
+    signal: 'New availability inquiry',
+    move: 'Hold RM140 and request an exact pickup time',
+    urgency: 'Today',
+    received: 'Today, 2:31 PM',
+    icon: MessageSquareText,
+    reason: 'Hamka is the newest Cajon inquiry. The listing already has strong traffic, so hold RM140 and test collection intent before negotiating.',
+    draft: 'Hi Hamka, ya, cajon dan bundle perkusi masih ada pada harga RM140. Pickup di Forest City Marina Hotel. Bila tarikh dan masa tepat anda boleh ambil?',
+  },
+  {
+    id: 'mohd-bike',
+    rank: 6,
     item: 'Mountain Bike',
     buyer: 'Mohd',
     ask: 190,
@@ -151,7 +167,7 @@ const actions: Action[] = [
   },
   {
     id: 'suria-drums',
-    rank: 6,
+    rank: 7,
     item: 'German-brand Drum Kit',
     buyer: 'Suria',
     ask: 590,
@@ -165,7 +181,7 @@ const actions: Action[] = [
   },
   {
     id: 'samri-cajon',
-    rank: 7,
+    rank: 8,
     item: 'Cajon Bundle',
     buyer: 'Samri',
     ask: 140,
@@ -179,7 +195,7 @@ const actions: Action[] = [
   },
   {
     id: 'shaaban-bass',
-    rank: 8,
+    rank: 9,
     item: '6-string Bass',
     buyer: 'Sha’aban',
     ask: 590,
@@ -193,7 +209,7 @@ const actions: Action[] = [
   },
   {
     id: 'kangwei-ukulele',
-    rank: 9,
+    rank: 10,
     item: 'Ukulele',
     buyer: 'Kangwei',
     ask: 90,
@@ -208,7 +224,7 @@ const actions: Action[] = [
   },
   {
     id: 'sufiyan-bike',
-    rank: 10,
+    rank: 11,
     item: 'Mountain Bike',
     buyer: 'Sufiyan',
     ask: 190,
@@ -227,7 +243,7 @@ const pipeline: PipelineRow[] = [
   { item: 'Fender Champion 40', asking: 'RM490', lead: 'Ahmad', signal: 'Specific RM400 offer', status: 'Offer', next: 'Counter RM450' },
   { item: 'TCL 98-inch TV', asking: 'RM10,000', lead: 'Danny', signal: 'Availability check', status: 'Fresh', next: 'Qualify transport' },
   { item: 'German-brand Drum Kit', asking: 'RM590', lead: 'Suria', signal: 'Fresh inquiry', status: 'Fresh', next: 'Qualify transport' },
-  { item: 'Cajon Bundle', asking: 'RM140', lead: 'Samri', signal: 'Fresh inquiry', status: 'Fresh', next: 'Ask pickup time' },
+  { item: 'Cajon Bundle', asking: 'RM140', lead: 'Hamka + Samri', signal: 'Newest inquiry at 2:31 PM', status: 'Fresh', next: 'Ask pickup time' },
   { item: '6-string Bass', asking: 'RM590', lead: 'Sha’aban', signal: 'General interest', status: 'Fresh', next: 'Ask pickup time' },
   { item: 'Ukulele', asking: 'RM90', lead: 'Kangwei', signal: 'Asked for brand', status: 'Fresh', next: 'Verify brand' },
   { item: 'Air Purifier', asking: 'RM150', lead: 'Zainul + 1', signal: 'Recent message cluster', status: 'Fresh', next: 'Ask pickup time' },
@@ -255,22 +271,14 @@ const attention = [
 ]
 
 const approvalItems: ApprovalItem[] = [
-  {
-    id: 'reply:murtaza-bike',
-    kind: 'Reply',
-    title: 'Accept Murtaza’s full RM190 bike offer',
-    summary: 'Confirm Forest City Marina Hotel and require an exact collection time.',
-    value: 'RM190',
-    actionId: 'murtaza-bike',
-  },
-  {
-    id: 'reply:ahmad-fender',
-    kind: 'Reply',
-    title: 'Counter Ahmad once at RM450',
-    summary: 'Split the RM90 gap, protect value, and move directly to pickup timing.',
-    value: 'RM450',
-    actionId: 'ahmad-fender',
-  },
+  ...actions.map((action) => ({
+    id: `reply:${action.id}`,
+    kind: 'Reply' as const,
+    title: action.move,
+    summary: `${action.buyer} · ${action.item} · ${action.signal}. ${action.reason}`,
+    value: `RM${(action.approvalValue ?? action.offer ?? action.ask).toLocaleString()}`,
+    actionId: action.id,
+  })),
   {
     id: 'price:echo-120',
     kind: 'Price change',
@@ -334,7 +342,6 @@ function urgencyStyles(urgency: Action['urgency']) {
 export default function DashboardPage() {
   const [activeActionId, setActiveActionId] = useState(actions[0].id)
   const [reviewAction, setReviewAction] = useState<Action | null>(null)
-  const [reviewed, setReviewed] = useState(false)
   const [copyError, setCopyError] = useState('')
 
   const activeAction = useMemo(() => actions.find((action) => action.id === activeActionId) ?? actions[0], [activeActionId])
@@ -346,18 +353,16 @@ export default function DashboardPage() {
 
   const openReview = (action: Action) => {
     setReviewAction(action)
-    setReviewed(false)
     setCopyError('')
   }
 
   const closeReview = () => {
     setReviewAction(null)
-    setReviewed(false)
     setCopyError('')
   }
 
   const approveAndCopy = async () => {
-    if (!reviewAction || !reviewed) return
+    if (!reviewAction) return
     try {
       await navigator.clipboard.writeText(reviewAction.draft)
       writeDecisionStatus(`reply:${reviewAction.id}`, 'copied')
@@ -377,15 +382,15 @@ export default function DashboardPage() {
       <div className="dashboard-theme min-h-screen bg-background font-ops text-foreground">
         <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl">
           <div className="mx-auto grid min-h-[68px] max-w-[1680px] grid-cols-[1fr_auto] items-center gap-5 px-5 md:grid-cols-[1fr_auto_1fr] md:px-8">
-            <Link href="/" className="inline-flex min-h-11 w-fit items-center gap-3 font-semibold tracking-[-0.02em]" aria-label="RedMart home">
+            <Link href="/" className="inline-flex min-h-[44px] w-fit items-center gap-3 font-semibold tracking-[-0.02em]" aria-label="RedMart home">
               <span className="grid size-7 rotate-6 place-items-center bg-[#211a1b]" aria-hidden="true"><span className="h-1 w-4 bg-[#e3c35a]" /></span>
               <span className="text-lg">RedMart</span>
             </Link>
             <nav aria-label="Dashboard sections" className="hidden items-center gap-8 md:flex">
-              <a className="flex min-h-11 items-center text-sm font-medium text-foreground" href="#brief">Brief</a>
-              <a className="flex min-h-11 items-center text-sm text-muted-foreground hover:text-foreground" href="#approvals">Approvals</a>
-              <a className="flex min-h-11 items-center text-sm text-muted-foreground hover:text-foreground" href="#pipeline">Listings</a>
-              <a className="flex min-h-11 items-center text-sm text-muted-foreground hover:text-foreground" href="#pricing">Pricing</a>
+              <a className="flex min-h-[44px] items-center text-sm font-medium text-foreground" href="#brief">Brief</a>
+              <a className="flex min-h-[44px] items-center text-sm text-muted-foreground hover:text-foreground" href="#approvals">Approvals</a>
+              <a className="flex min-h-[44px] items-center text-sm text-muted-foreground hover:text-foreground" href="#pipeline">Listings</a>
+              <a className="flex min-h-[44px] items-center text-sm text-muted-foreground hover:text-foreground" href="#pricing">Pricing</a>
             </nav>
             <div className="justify-self-end"><Badge variant="outline" className="h-7 border-[#2f7b55]/25 bg-[#dff3e7] px-3 text-sm text-[#245d42]"><Bot data-icon="inline-start" aria-hidden="true" />Approval mode</Badge></div>
           </div>
@@ -443,7 +448,7 @@ export default function DashboardPage() {
 
               <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="max-w-lg text-sm leading-6 text-[#aaa29d]">Review and copy only. Red cannot send, reply, or react as you.</p>
-                <Button className="min-h-11 bg-[#8b2232] px-5 text-sm text-white hover:bg-[#721a27]" onClick={() => openReview(activeAction)}>{copiedSet.has(activeAction.id) ? <Check aria-hidden="true" /> : <ClipboardCheck aria-hidden="true" />}{copiedSet.has(activeAction.id) ? 'Draft copied' : 'Review this draft'}<ArrowRight aria-hidden="true" /></Button>
+                <Button className="min-h-[44px] bg-[#8b2232] px-5 text-sm text-white hover:bg-[#721a27]" onClick={() => openReview(activeAction)}>{copiedSet.has(activeAction.id) ? <Check aria-hidden="true" /> : <ClipboardCheck aria-hidden="true" />}{copiedSet.has(activeAction.id) ? 'Draft copied' : 'Review this draft'}<ArrowRight aria-hidden="true" /></Button>
               </div>
             </div>
 
@@ -469,8 +474,8 @@ export default function DashboardPage() {
 
           <section id="approvals" aria-labelledby="approvals-heading" className="mt-20 scroll-mt-28">
             <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(280px,0.45fr)] md:items-end">
-              <div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#8b2232]">Decision inbox / {String(pendingApprovalCount).padStart(2, '0')}</p><h2 id="approvals-heading" className="mt-3 text-[clamp(2.2rem,4vw,4.2rem)] font-medium leading-none tracking-[-0.055em]">Red works. You decide.</h2></div>
-              <p className="text-base leading-7 text-muted-foreground">Every move arrives with evidence, tradeoffs, exact scope, and a reversible approval. Buyer replies remain copy-only for your final send.</p>
+              <div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#8b2232]">Decision inbox / {String(pendingApprovalCount).padStart(2, '0')}</p><h2 id="approvals-heading" className="mt-3 text-[clamp(2.2rem,4vw,4.2rem)] font-medium leading-none tracking-[-0.055em]">One review. One approval. One manual paste.</h2></div>
+              <p className="text-base leading-7 text-muted-foreground">Every ranked lead is here with the situation, Red’s reasoning, and the exact reply. Approval copies the draft and records your decision. It never sends.</p>
             </div>
 
             <div className="mt-8 border-t border-[#282321]">
@@ -485,9 +490,9 @@ export default function DashboardPage() {
                     <Badge variant="outline" className={cn('h-7 px-3 text-sm', item.kind === 'Price change' ? 'border-[#9a6d20]/25 bg-[#f6ecd7] text-[#79551c]' : 'border-[#355f9a]/20 bg-[#e5eef9] text-[#294f82]')}>{item.kind}</Badge>
                     <div><h3 className="text-lg font-semibold tracking-[-0.025em]">{item.title}</h3><p className="mt-1 text-sm leading-6 text-muted-foreground">{item.summary}</p></div>
                     <strong className="font-opsmono text-lg font-medium tabular-nums md:text-right">{item.value}</strong>
-                    <Button variant="outline" className={cn('min-h-11 min-w-[148px] border-border bg-transparent px-4 text-sm hover:bg-muted', state && 'border-[#2f7b55]/25 bg-[#dff3e7] text-[#245d42]')} onClick={review} disabled={isVerified}>
+                    <Button variant="outline" className={cn('min-h-[44px] min-w-[148px] border-border bg-transparent px-4 text-sm hover:bg-muted', state && 'border-[#2f7b55]/25 bg-[#dff3e7] text-[#245d42]')} onClick={review} disabled={isVerified}>
                       {state ? <CheckCircle2 aria-hidden="true" /> : <ChevronRight aria-hidden="true" />}
-                      {isVerified ? 'Verified live' : state === 'copied' ? 'Copied for send' : state === 'held' ? 'Held' : 'Review decision'}
+                      {isVerified ? 'Verified live' : state === 'copied' ? 'Copied for send' : state === 'held' ? 'Held' : 'Review & approve'}
                     </Button>
                   </article>
                 )
@@ -516,7 +521,7 @@ export default function DashboardPage() {
           <section aria-labelledby="policy-heading" className="mt-20 border border-border bg-card">
             <div className="grid gap-6 border-b border-border p-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:p-7">
               <div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#8b2232]">Agent policy / approval gated</p><h2 id="policy-heading" className="mt-2 text-3xl font-medium tracking-[-0.045em]">Do the work automatically. Escalate the decisions.</h2><p className="mt-3 max-w-4xl text-base leading-7 text-muted-foreground">Red monitors every listing, scores buyer intent, prepares follow-ups, and detects stale pricing. It asks before any listing mutation and never sends a person-to-person message as Adam.</p></div>
-              <Button variant="outline" className={cn('min-h-11 border-border bg-transparent px-4 text-sm hover:bg-muted', priceWatcherEnabled && 'border-[#2f7b55]/25 bg-[#dff3e7] text-[#245d42]')} onClick={() => writeDecisionStatus('policy:price-watcher', priceWatcherEnabled ? 'held' : 'approved')}>
+              <Button variant="outline" className={cn('min-h-[44px] border-border bg-transparent px-4 text-sm hover:bg-muted', priceWatcherEnabled && 'border-[#2f7b55]/25 bg-[#dff3e7] text-[#245d42]')} onClick={() => writeDecisionStatus('policy:price-watcher', priceWatcherEnabled ? 'held' : 'approved')}>
                 {priceWatcherEnabled ? <Zap aria-hidden="true" /> : <RefreshCw aria-hidden="true" />}
                 Price watcher {priceWatcherEnabled ? 'on' : 'off'}
               </Button>
@@ -552,7 +557,7 @@ export default function DashboardPage() {
           <section className="mt-4 grid gap-4 border border-border bg-card p-5 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:p-6" aria-labelledby="safety-heading">
             <span className="grid size-11 place-items-center border border-[#2f7b55]/25 bg-[#dff3e7] text-[#245d42]"><ShieldCheck className="size-5" aria-hidden="true" /></span>
             <div><h2 id="safety-heading" className="text-lg font-semibold">Approval means copy, never send</h2><p className="mt-1 text-sm leading-6 text-muted-foreground">Red can prepare the move and exact wording. Adam performs every person-to-person communication in Helium.</p></div>
-            <Link href="/" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#8b2232]">About RedMart <ArrowRight className="size-4" aria-hidden="true" /></Link>
+            <Link href="/" className="inline-flex min-h-[44px] items-center gap-2 text-sm font-semibold text-[#8b2232]">About RedMart <ArrowRight className="size-4" aria-hidden="true" /></Link>
           </section>
         </main>
       </div>
@@ -560,17 +565,17 @@ export default function DashboardPage() {
       <Dialog open={reviewAction !== null} onOpenChange={(open) => !open && closeReview()}>
         <DialogContent className="dashboard-dialog-theme border-border bg-popover font-ops text-popover-foreground shadow-2xl shadow-black/25 sm:max-w-xl">
           {reviewAction ? <>
-            <DialogHeader><Badge variant="outline" className="mb-1 h-7 border-[#8b2232]/25 bg-[#f4dfe3] px-3 text-sm text-[#7c1f2e]">Action {String(reviewAction.rank).padStart(2, '0')}</Badge><DialogTitle className="font-ops text-2xl font-medium tracking-[-0.04em] text-foreground">Review reply for {reviewAction.buyer}</DialogTitle><DialogDescription className="text-base leading-7 text-muted-foreground">Confirm the recipient, price, pickup location, and wording before this draft is copied.</DialogDescription></DialogHeader>
+            <DialogHeader><Badge variant="outline" className="mb-1 h-7 border-[#8b2232]/25 bg-[#f4dfe3] px-3 text-sm text-[#7c1f2e]">Action {String(reviewAction.rank).padStart(2, '0')}</Badge><DialogTitle className="font-ops text-2xl font-medium tracking-[-0.04em] text-foreground">Review reply for {reviewAction.buyer}</DialogTitle><DialogDescription className="text-base leading-7 text-muted-foreground">The situation, reasoning, and exact message are together here. Approve once to copy it.</DialogDescription></DialogHeader>
             <div className="space-y-5">
+              <ol className="grid grid-cols-3 border border-border bg-muted text-center font-opsmono text-sm" aria-label="Reply handoff steps"><li className="border-r border-border p-3 font-semibold text-[#8b2232]">1 Review</li><li className="border-r border-border p-3 font-semibold text-[#8b2232]">2 Approve + copy</li><li className="p-3 text-muted-foreground">3 Paste in Helium</li></ol>
               <div className="grid grid-cols-2 gap-4 border-y border-border py-4 text-sm"><div><p className="font-opsmono uppercase text-muted-foreground">Item</p><p className="mt-1 font-semibold">{reviewAction.item}</p></div><div><p className="font-opsmono uppercase text-muted-foreground">Asking</p><p className="mt-1 font-opsmono font-semibold tabular-nums">RM{reviewAction.ask.toLocaleString()}</p></div><div><p className="font-opsmono uppercase text-muted-foreground">Recommended</p><p className="mt-1 font-semibold">{reviewAction.move}</p></div><div><p className="font-opsmono uppercase text-muted-foreground">Pickup</p><p className="mt-1 font-semibold">Forest City Marina Hotel</p></div></div>
               <div><p className="mb-2 font-opsmono text-sm font-semibold uppercase tracking-[0.05em] text-[#8b2232]">Why this move</p><p className="text-base leading-7 text-muted-foreground">{reviewAction.reason}</p></div>
               <div><p className="mb-2 font-opsmono text-sm font-semibold uppercase tracking-[0.05em] text-[#8b2232]">Exact draft</p><div className="select-text border border-border bg-background p-4 text-base leading-7">{reviewAction.draft}</div></div>
               {reviewAction.note ? <div className="flex items-start gap-3 border-l-2 border-[#9a6d20] bg-[#f6ecd7] p-4 text-sm leading-6 text-[#79551c]"><AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />{reviewAction.note}</div> : null}
-              <label className="flex min-h-12 cursor-pointer items-start gap-3 border border-border bg-muted p-4 text-base text-foreground hover:bg-[#dedad4]"><input type="checkbox" checked={reviewed} onChange={(event) => setReviewed(event.target.checked)} className="mt-1 size-5 shrink-0 accent-[#8b2232]" /><span>I reviewed the final recipient, price, pickup location, and wording.</span></label>
               {copyError ? <p role="alert" className="text-sm text-[#8b2232]">{copyError}</p> : null}
               <div className="flex items-start gap-3 border border-[#2f7b55]/25 bg-[#dff3e7] p-4 text-sm leading-6 text-[#245d42]"><ShieldCheck className="mt-0.5 size-4 shrink-0" aria-hidden="true" />Approving copies this draft to your clipboard. It does not send a Facebook message. You must send it manually in Helium.</div>
             </div>
-            <DialogFooter className="border-border bg-muted"><Button variant="ghost" className="min-h-11" onClick={closeReview}>Cancel</Button><Button className="min-h-11" disabled={!reviewed} onClick={approveAndCopy}><ClipboardCheck aria-hidden="true" />Approve & copy reply</Button></DialogFooter>
+            <DialogFooter className="border-border bg-muted"><Button variant="ghost" className="min-h-[44px]" onClick={closeReview}>Cancel</Button><Button className="min-h-[44px]" onClick={approveAndCopy}><ClipboardCheck aria-hidden="true" />Approve & copy to clipboard</Button></DialogFooter>
           </> : null}
         </DialogContent>
       </Dialog>
