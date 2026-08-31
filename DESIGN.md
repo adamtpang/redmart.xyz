@@ -48,6 +48,16 @@ Dashboard component families:
 - Dialog for the required reply review confirmation
 - Responsive listing records instead of a horizontally scrolling table
 
+Agent interaction model:
+
+- One decision inbox shows the move, evidence, value, and approval state.
+- Reply approvals persist as copy-ready decisions. Adam still sends manually.
+- Exact listing edits persist separately from reply decisions and never imply
+  that Facebook changed before the Helium connector verifies the mutation.
+- The price watcher can be enabled or disabled and proposes a reduction after
+  72 hours with no buyer signal and at least 25 clicks.
+- All 14 listings remain visible in the report, including quiet items.
+
 Dashboard density follows a 4px rhythm. Currency values use tabular numerals.
 Essential text is never smaller than 12px and visible targets are at least
 44px tall. Person-to-person actions are always copy-only: Red prepares the
@@ -154,6 +164,18 @@ Dashboard redesign verification, 2026-08-31:
 | Production Shapeable rerun | 20 of 20 checks passed, 0 findings |
 | Production Shapeable audit ID | `audit-20260831044619` |
 | Helium visual and keyboard pass | Awaiting one-time remote-debugging approval |
+
+Approval-driven agent expansion, 2026-08-31:
+
+| Check | Result |
+| --- | --- |
+| Persistent browser approval state | Implemented |
+| Reply approval behavior | Review and copy only |
+| Exact price approval | Amazon Echo RM130 to RM120 |
+| Price watcher policy | 72 hours, 25 clicks, 24-hour cooldown |
+| All listing coverage | 14 of 14 |
+| Live connector status | Explicitly unavailable until Helium approval |
+| Production Shapeable rerun | Pending deployment |
 
 Visual captures:
 

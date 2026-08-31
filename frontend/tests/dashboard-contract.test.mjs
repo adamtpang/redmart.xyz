@@ -31,6 +31,16 @@ test('dashboard implements the Shapeable responsive and type fixes', () => {
   assert.match(dashboard, /min-h-\[76px\]/)
 })
 
+test('Red exposes an approval-driven sales operating model', () => {
+  assert.match(dashboard, /Red works\. You decide\./)
+  assert.match(dashboard, /red-marketplace-decisions-v1/)
+  assert.match(dashboard, /Do the work automatically\. Escalate the decisions\./)
+  assert.match(dashboard, /72 hours with no buyer signal and at least 25 clicks/)
+  assert.match(dashboard, /I approve changing only the Amazon Echo price from RM130 to RM120/)
+  assert.match(dashboard, /14 \/ 14/)
+  assert.match(dashboard, /Live Facebook sync/)
+})
+
 test('homepage links to the dashboard and the former route redirects', () => {
   assert.match(homepage, /href="\/dashboard"/)
   assert.match(marketplaceRedirect, /destination: '\/dashboard'/)

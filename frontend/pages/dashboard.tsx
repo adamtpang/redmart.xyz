@@ -1,23 +1,29 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useSyncExternalStore } from 'react'
 import {
   AlertTriangle,
   ArrowRight,
+  Bot,
   Bike,
   Check,
+  CheckCircle2,
   ChevronRight,
   CircleDollarSign,
   ClipboardCheck,
   Clock3,
-  Eye,
+  Database,
   Inbox,
   MessageSquareText,
   PackageSearch,
+  RefreshCw,
   ShieldCheck,
+  SlidersHorizontal,
   Tag,
   TrendingDown,
   Tv,
+  WifiOff,
+  Zap,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -57,6 +63,17 @@ type PipelineRow = {
   signal: string
   status: 'Close now' | 'Offer' | 'Fresh' | 'Waiting' | 'Watch' | 'No signal'
   next: string
+}
+
+type ApprovalStatus = 'copied' | 'approved' | 'held'
+
+type ApprovalItem = {
+  id: string
+  kind: 'Reply' | 'Price change'
+  title: string
+  summary: string
+  value: string
+  actionId?: string
 }
 
 const snapshotLabel = '31 Aug, 12:18 PM SGT'
@@ -226,6 +243,67 @@ const attention = [
   { item: 'Amazon Echo', clicks: 47, width: '12%' },
 ]
 
+const approvalItems: ApprovalItem[] = [
+  {
+    id: 'reply:murtaza-bike',
+    kind: 'Reply',
+    title: 'Accept Murtaza’s full RM190 bike offer',
+    summary: 'Confirm Forest City Marina Hotel and require an exact collection time.',
+    value: 'RM190',
+    actionId: 'murtaza-bike',
+  },
+  {
+    id: 'reply:ahmad-fender',
+    kind: 'Reply',
+    title: 'Counter Ahmad once at RM450',
+    summary: 'Split the RM90 gap, protect value, and move directly to pickup timing.',
+    value: 'RM450',
+    actionId: 'ahmad-fender',
+  },
+  {
+    id: 'price:echo-120',
+    kind: 'Price change',
+    title: 'Reduce Amazon Echo from RM130 to RM120',
+    summary: '47 clicks and no visible buyer signal make this the only current price test.',
+    value: '-RM10',
+  },
+]
+
+const decisionStoreKey = 'red-marketplace-decisions-v1'
+const decisionStoreEvent = 'red-marketplace-decisions-changed'
+const emptyDecisionSnapshot = '{}'
+
+function getDecisionSnapshot() {
+  if (typeof window === 'undefined') return emptyDecisionSnapshot
+  return window.localStorage.getItem(decisionStoreKey) ?? emptyDecisionSnapshot
+}
+
+function subscribeToDecisionStore(onStoreChange: () => void) {
+  if (typeof window === 'undefined') return () => undefined
+  window.addEventListener('storage', onStoreChange)
+  window.addEventListener(decisionStoreEvent, onStoreChange)
+  return () => {
+    window.removeEventListener('storage', onStoreChange)
+    window.removeEventListener(decisionStoreEvent, onStoreChange)
+  }
+}
+
+function parseDecisionSnapshot(snapshot: string): Record<string, ApprovalStatus> {
+  try {
+    const value = JSON.parse(snapshot)
+    return value && typeof value === 'object' ? value as Record<string, ApprovalStatus> : {}
+  } catch {
+    return {}
+  }
+}
+
+function writeDecisionStatus(id: string, status: ApprovalStatus) {
+  if (typeof window === 'undefined') return
+  const current = parseDecisionSnapshot(getDecisionSnapshot())
+  window.localStorage.setItem(decisionStoreKey, JSON.stringify({ ...current, [id]: status }))
+  window.dispatchEvent(new Event(decisionStoreEvent))
+}
+
 const statusStyles: Record<PipelineRow['status'], string> = {
   'Close now': 'border-[#2f7b55]/25 bg-[#dff3e7] text-[#245d42]',
   Offer: 'border-[#8b2232]/25 bg-[#f4dfe3] text-[#7c1f2e]',
@@ -246,11 +324,16 @@ export default function DashboardPage() {
   const [activeActionId, setActiveActionId] = useState(actions[0].id)
   const [reviewAction, setReviewAction] = useState<Action | null>(null)
   const [reviewed, setReviewed] = useState(false)
-  const [copiedActionIds, setCopiedActionIds] = useState<string[]>([])
   const [copyError, setCopyError] = useState('')
+  const [priceReviewOpen, setPriceReviewOpen] = useState(false)
+  const [priceReviewed, setPriceReviewed] = useState(false)
 
   const activeAction = useMemo(() => actions.find((action) => action.id === activeActionId) ?? actions[0], [activeActionId])
-  const copiedSet = useMemo(() => new Set(copiedActionIds), [copiedActionIds])
+  const decisionSnapshot = useSyncExternalStore(subscribeToDecisionStore, getDecisionSnapshot, () => emptyDecisionSnapshot)
+  const decisionStates = useMemo(() => parseDecisionSnapshot(decisionSnapshot), [decisionSnapshot])
+  const copiedSet = useMemo(() => new Set(actions.filter((action) => decisionStates[`reply:${action.id}`] === 'copied').map((action) => action.id)), [decisionStates])
+  const pendingApprovalCount = approvalItems.filter((item) => !decisionStates[item.id]).length
+  const priceWatcherEnabled = decisionStates['policy:price-watcher'] !== 'held'
 
   const openReview = (action: Action) => {
     setReviewAction(action)
@@ -264,15 +347,31 @@ export default function DashboardPage() {
     setCopyError('')
   }
 
+  const openPriceReview = () => {
+    setPriceReviewOpen(true)
+    setPriceReviewed(false)
+  }
+
+  const closePriceReview = () => {
+    setPriceReviewOpen(false)
+    setPriceReviewed(false)
+  }
+
   const approveAndCopy = async () => {
     if (!reviewAction || !reviewed) return
     try {
       await navigator.clipboard.writeText(reviewAction.draft)
-      setCopiedActionIds((current) => current.includes(reviewAction.id) ? current : [...current, reviewAction.id])
+      writeDecisionStatus(`reply:${reviewAction.id}`, 'copied')
       closeReview()
     } catch {
       setCopyError('Clipboard access was blocked. Select the draft and copy it manually.')
     }
+  }
+
+  const approvePriceChange = () => {
+    if (!priceReviewed) return
+    writeDecisionStatus('price:echo-120', 'approved')
+    closePriceReview()
   }
 
   return (
@@ -291,10 +390,11 @@ export default function DashboardPage() {
             </Link>
             <nav aria-label="Dashboard sections" className="hidden items-center gap-8 md:flex">
               <a className="flex min-h-11 items-center text-sm font-medium text-foreground" href="#brief">Brief</a>
+              <a className="flex min-h-11 items-center text-sm text-muted-foreground hover:text-foreground" href="#approvals">Approvals</a>
               <a className="flex min-h-11 items-center text-sm text-muted-foreground hover:text-foreground" href="#pipeline">Listings</a>
               <a className="flex min-h-11 items-center text-sm text-muted-foreground hover:text-foreground" href="#pricing">Pricing</a>
             </nav>
-            <div className="justify-self-end"><Badge variant="outline" className="h-7 border-[#2f7b55]/25 bg-[#dff3e7] px-3 text-sm text-[#245d42]"><Eye data-icon="inline-start" aria-hidden="true" />Read-only monitor</Badge></div>
+            <div className="justify-self-end"><Badge variant="outline" className="h-7 border-[#2f7b55]/25 bg-[#dff3e7] px-3 text-sm text-[#245d42]"><Bot data-icon="inline-start" aria-hidden="true" />Approval mode</Badge></div>
           </div>
         </header>
 
@@ -313,6 +413,16 @@ export default function DashboardPage() {
                   <span><span className="block text-base font-medium">{item.label}</span><span className="mt-1 block text-sm text-muted-foreground">{item.detail}</span></span>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-4 grid border border-border bg-card lg:grid-cols-[minmax(0,1.25fr)_repeat(3,minmax(170px,0.5fr))]" aria-label="Red agent operating status">
+              <div className="flex items-start gap-4 p-5 lg:p-6">
+                <span className="grid size-11 shrink-0 place-items-center bg-[#211a1b] text-[#e3c35a]"><Bot className="size-5" aria-hidden="true" /></span>
+                <div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.06em] text-[#8b2232]">Red operating status</p><h2 className="mt-1 text-xl font-semibold tracking-[-0.03em]">Latest snapshot analyzed. Live sync needs Helium approval.</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Red can keep ranking, researching, and drafting from captured data. Facebook changes wait for an exact approval and a connected local Helium session.</p></div>
+              </div>
+              <div className="border-t border-border p-5 lg:border-l lg:border-t-0"><Database className="size-5 text-[#2f7b55]" aria-hidden="true" /><strong className="mt-4 block text-lg">14 / 14</strong><span className="mt-1 block text-sm text-muted-foreground">Listings accounted for</span></div>
+              <div className="border-t border-border p-5 lg:border-l lg:border-t-0"><ClipboardCheck className="size-5 text-[#8b2232]" aria-hidden="true" /><strong className="mt-4 block text-lg tabular-nums">{pendingApprovalCount}</strong><span className="mt-1 block text-sm text-muted-foreground">Decisions waiting</span></div>
+              <div className="border-t border-border p-5 lg:border-l lg:border-t-0"><WifiOff className="size-5 text-[#9a6d20]" aria-hidden="true" /><strong className="mt-4 block text-lg">Paused</strong><span className="mt-1 block text-sm text-muted-foreground">Live Facebook sync</span></div>
             </div>
           </section>
 
@@ -364,6 +474,33 @@ export default function DashboardPage() {
             </aside>
           </section>
 
+          <section id="approvals" aria-labelledby="approvals-heading" className="mt-20 scroll-mt-28">
+            <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(280px,0.45fr)] md:items-end">
+              <div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#8b2232]">Decision inbox / {String(pendingApprovalCount).padStart(2, '0')}</p><h2 id="approvals-heading" className="mt-3 text-[clamp(2.2rem,4vw,4.2rem)] font-medium leading-none tracking-[-0.055em]">Red works. You decide.</h2></div>
+              <p className="text-base leading-7 text-muted-foreground">Every move arrives with evidence, tradeoffs, exact scope, and a reversible approval. Buyer replies remain copy-only for your final send.</p>
+            </div>
+
+            <div className="mt-8 border-t border-[#282321]">
+              {approvalItems.map((item, index) => {
+                const state = decisionStates[item.id]
+                const action = item.actionId ? actions.find((candidate) => candidate.id === item.actionId) : undefined
+                const review = () => item.kind === 'Price change' ? openPriceReview() : action && openReview(action)
+                return (
+                  <article key={item.id} className="grid gap-5 border-b border-border px-4 py-5 md:grid-cols-[48px_120px_minmax(0,1fr)_110px_auto] md:items-center md:py-4">
+                    <span className="font-opsmono text-sm text-[#8b2232]">{String(index + 1).padStart(2, '0')}</span>
+                    <Badge variant="outline" className={cn('h-7 px-3 text-sm', item.kind === 'Price change' ? 'border-[#9a6d20]/25 bg-[#f6ecd7] text-[#79551c]' : 'border-[#355f9a]/20 bg-[#e5eef9] text-[#294f82]')}>{item.kind}</Badge>
+                    <div><h3 className="text-lg font-semibold tracking-[-0.025em]">{item.title}</h3><p className="mt-1 text-sm leading-6 text-muted-foreground">{item.summary}</p></div>
+                    <strong className="font-opsmono text-lg font-medium tabular-nums md:text-right">{item.value}</strong>
+                    <Button variant="outline" className={cn('min-h-11 min-w-[148px] border-border bg-transparent px-4 text-sm hover:bg-muted', state && 'border-[#2f7b55]/25 bg-[#dff3e7] text-[#245d42]')} onClick={review}>
+                      {state ? <CheckCircle2 aria-hidden="true" /> : <ChevronRight aria-hidden="true" />}
+                      {state === 'copied' ? 'Copied for send' : state === 'approved' ? 'Approved locally' : state === 'held' ? 'Held' : 'Review decision'}
+                    </Button>
+                  </article>
+                )
+              })}
+            </div>
+          </section>
+
           <section id="pipeline" aria-labelledby="pipeline-heading" className="mt-20 scroll-mt-28">
             <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(280px,0.45fr)] md:items-end"><div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#8b2232]">Listing ledger / 14</p><h2 id="pipeline-heading" className="mt-3 text-[clamp(2.2rem,4vw,4.2rem)] font-medium leading-none tracking-[-0.055em]">Every item. Nothing hidden.</h2></div><p className="text-base leading-7 text-muted-foreground">All fields reflow into readable two-column records on smaller screens. Nothing is clipped or pushed off-canvas.</p></div>
 
@@ -382,11 +519,33 @@ export default function DashboardPage() {
             </div>
           </section>
 
+          <section aria-labelledby="policy-heading" className="mt-20 border border-border bg-card">
+            <div className="grid gap-6 border-b border-border p-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:p-7">
+              <div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#8b2232]">Agent policy / approval gated</p><h2 id="policy-heading" className="mt-2 text-3xl font-medium tracking-[-0.045em]">Do the work automatically. Escalate the decisions.</h2><p className="mt-3 max-w-4xl text-base leading-7 text-muted-foreground">Red monitors every listing, scores buyer intent, prepares follow-ups, and detects stale pricing. It asks before any listing mutation and never sends a person-to-person message as Adam.</p></div>
+              <Button variant="outline" className={cn('min-h-11 border-border bg-transparent px-4 text-sm hover:bg-muted', priceWatcherEnabled && 'border-[#2f7b55]/25 bg-[#dff3e7] text-[#245d42]')} onClick={() => writeDecisionStatus('policy:price-watcher', priceWatcherEnabled ? 'held' : 'approved')}>
+                {priceWatcherEnabled ? <Zap aria-hidden="true" /> : <RefreshCw aria-hidden="true" />}
+                Price watcher {priceWatcherEnabled ? 'on' : 'off'}
+              </Button>
+            </div>
+            <div className="grid sm:grid-cols-2 xl:grid-cols-4">
+              {[
+                ['01', 'Monitor', 'Check listings and inbox previews every hour when Helium is connected.'],
+                ['02', 'Work leads', 'Rank intent, draft replies, flag scams, and ask for exact pickup timing.'],
+                ['03', 'Price intelligently', 'Propose a small reduction after 72 hours with no buyer signal and at least 25 clicks.'],
+                ['04', 'Ask before acting', 'Require an exact approval for every price, status, or listing-field change.'],
+              ].map(([number, title, description], index) => (
+                <div key={number} className={cn('min-h-[190px] p-5 md:p-6', index > 0 && 'border-t border-border sm:border-t-0 sm:border-l', index === 2 && 'sm:border-l-0 xl:border-l', index > 1 && 'sm:border-t xl:border-t-0')}>
+                  <span className="font-opsmono text-sm text-[#8b2232]">{number}</span><h3 className="mt-10 text-xl font-semibold tracking-[-0.03em]">{title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
           <section id="pricing" aria-labelledby="pricing-heading" className="mt-20 grid scroll-mt-28 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.62fr)]">
             <div className="border border-border bg-card p-5 md:p-7">
-              <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between"><div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#8b2232]">Price decision / 01</p><h2 id="pricing-heading" className="mt-3 text-3xl font-medium tracking-[-0.045em]">Amazon Echo: RM130 to RM120</h2><p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground">The Echo has 47 clicks and no visible buyer signal. A RM10 cut is the only current repricing proposal. No change has been approved or applied.</p></div><Badge variant="outline" className="h-7 shrink-0 border-[#9a6d20]/25 bg-[#f6ecd7] px-3 text-sm text-[#79551c]"><TrendingDown data-icon="inline-start" aria-hidden="true" />Owner decision</Badge></div>
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between"><div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#8b2232]">Price decision / 01</p><h2 id="pricing-heading" className="mt-3 text-3xl font-medium tracking-[-0.045em]">Amazon Echo: RM130 to RM120</h2><p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground">The Echo has 47 clicks and no visible buyer signal. A RM10 cut is the only current repricing proposal. {decisionStates['price:echo-120'] === 'approved' ? 'The exact change is approved locally but not yet applied to Facebook.' : decisionStates['price:echo-120'] === 'held' ? 'The current decision is to hold RM130.' : 'No change has been approved or applied.'}</p></div><Badge variant="outline" className="h-7 shrink-0 border-[#9a6d20]/25 bg-[#f6ecd7] px-3 text-sm text-[#79551c]"><TrendingDown data-icon="inline-start" aria-hidden="true" />Owner decision</Badge></div>
               <div className="mt-8 grid border-y border-border sm:grid-cols-3"><div className="py-5 sm:pr-5"><span className="font-opsmono text-sm uppercase text-muted-foreground">Current</span><strong className="mt-2 block font-opsmono text-3xl font-medium tabular-nums">RM130</strong></div><div className="border-t border-border py-5 sm:border-l sm:border-t-0 sm:px-5"><span className="font-opsmono text-sm uppercase text-[#8b2232]">Proposed</span><strong className="mt-2 block font-opsmono text-3xl font-medium tabular-nums text-[#8b2232]">RM120</strong></div><div className="border-t border-border py-5 sm:border-l sm:border-t-0 sm:pl-5"><span className="font-opsmono text-sm uppercase text-muted-foreground">Tradeoff</span><strong className="mt-2 block text-base font-medium">RM10 less for a faster conversion test</strong></div></div>
-              <p className="mt-5 text-sm leading-6 text-muted-foreground">If approved, reassess 24 hours after the edit. Hold all other listing prices while buyer conversations are active.</p>
+              <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><p className="text-sm leading-6 text-muted-foreground">If approved, reassess 24 hours after the edit. Hold all other listing prices while buyer conversations are active.</p><Button variant="outline" className={cn('min-h-11 shrink-0 border-border bg-transparent px-4 text-sm hover:bg-muted', decisionStates['price:echo-120'] && 'border-[#2f7b55]/25 bg-[#dff3e7] text-[#245d42]')} onClick={openPriceReview}>{decisionStates['price:echo-120'] === 'approved' ? <CheckCircle2 aria-hidden="true" /> : <ChevronRight aria-hidden="true" />}{decisionStates['price:echo-120'] === 'approved' ? 'Approved locally' : decisionStates['price:echo-120'] === 'held' ? 'Price held' : 'Review price change'}</Button></div>
             </div>
 
             <div className="bg-[#8b2232] p-5 text-white md:p-7">
@@ -419,6 +578,20 @@ export default function DashboardPage() {
             </div>
             <DialogFooter className="border-border bg-muted"><Button variant="ghost" className="min-h-11" onClick={closeReview}>Cancel</Button><Button className="min-h-11" disabled={!reviewed} onClick={approveAndCopy}><ClipboardCheck aria-hidden="true" />Approve & copy reply</Button></DialogFooter>
           </> : null}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={priceReviewOpen} onOpenChange={(open) => !open && closePriceReview()}>
+        <DialogContent className="dashboard-dialog-theme border-border bg-popover font-ops text-popover-foreground shadow-2xl shadow-black/25 sm:max-w-xl">
+          <DialogHeader><Badge variant="outline" className="mb-1 h-7 border-[#9a6d20]/25 bg-[#f6ecd7] px-3 text-sm text-[#79551c]"><TrendingDown data-icon="inline-start" aria-hidden="true" />Price approval</Badge><DialogTitle className="font-ops text-2xl font-medium tracking-[-0.04em] text-foreground">Reduce Amazon Echo to RM120?</DialogTitle><DialogDescription className="text-base leading-7 text-muted-foreground">Approve one exact listing-field change. No other title, description, status, or listing field is included.</DialogDescription></DialogHeader>
+          <div className="space-y-5">
+            <div className="grid grid-cols-3 border-y border-border py-4 text-sm"><div><p className="font-opsmono uppercase text-muted-foreground">Current</p><p className="mt-1 font-opsmono text-xl font-semibold tabular-nums">RM130</p></div><div className="border-l border-border pl-4"><p className="font-opsmono uppercase text-[#8b2232]">Approved price</p><p className="mt-1 font-opsmono text-xl font-semibold tabular-nums text-[#8b2232]">RM120</p></div><div className="border-l border-border pl-4"><p className="font-opsmono uppercase text-muted-foreground">Change</p><p className="mt-1 font-opsmono text-xl font-semibold tabular-nums">-RM10</p></div></div>
+            <div><p className="mb-2 font-opsmono text-sm font-semibold uppercase tracking-[0.05em] text-[#8b2232]">Why Red recommends it</p><p className="text-base leading-7 text-muted-foreground">The listing has 47 clicks and no visible buyer signal. A 7.7% reduction is small enough to preserve value and large enough to create a fresh pricing test.</p></div>
+            <div className="grid gap-3 sm:grid-cols-2"><div className="border border-border bg-background p-4"><SlidersHorizontal className="size-5 text-[#8b2232]" aria-hidden="true" /><strong className="mt-3 block">Exact scope</strong><p className="mt-1 text-sm leading-6 text-muted-foreground">Amazon Echo price only, RM130 to RM120.</p></div><div className="border border-border bg-background p-4"><Clock3 className="size-5 text-[#8b2232]" aria-hidden="true" /><strong className="mt-3 block">Recheck window</strong><p className="mt-1 text-sm leading-6 text-muted-foreground">Wait 24 hours before proposing another change.</p></div></div>
+            <label className="flex min-h-12 cursor-pointer items-start gap-3 border border-border bg-muted p-4 text-base text-foreground hover:bg-[#dedad4]"><input type="checkbox" checked={priceReviewed} onChange={(event) => setPriceReviewed(event.target.checked)} className="mt-1 size-5 shrink-0 accent-[#8b2232]" /><span>I approve changing only the Amazon Echo price from RM130 to RM120.</span></label>
+            <div className="flex items-start gap-3 border border-[#9a6d20]/25 bg-[#f6ecd7] p-4 text-sm leading-6 text-[#79551c]"><WifiOff className="mt-0.5 size-4 shrink-0" aria-hidden="true" />This approval is saved in this dashboard. Applying it to Facebook still requires the local Helium connector, which is currently awaiting remote-debugging approval.</div>
+          </div>
+          <DialogFooter className="border-border bg-muted"><Button variant="ghost" className="min-h-11" onClick={() => { writeDecisionStatus('price:echo-120', 'held'); closePriceReview() }}>Hold price</Button><Button className="min-h-11" disabled={!priceReviewed} onClick={approvePriceChange}><Check aria-hidden="true" />Approve exact price</Button></DialogFooter>
         </DialogContent>
       </Dialog>
     </>
