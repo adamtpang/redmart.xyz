@@ -50,7 +50,8 @@ Dashboard component families:
 
 Agent interaction model:
 
-- One decision inbox shows the move, evidence, value, and approval state.
+- One master-detail queue shows the move, evidence, firm-offer value, and
+  approval state without repeating the same decision in a second inbox.
 - Reply approvals persist as copy-ready decisions. Adam still sends manually.
 - Exact listing edits persist separately from reply decisions and never imply
   that Facebook changed before the Helium connector verifies the mutation.
@@ -58,10 +59,32 @@ Agent interaction model:
   72 hours with no buyer signal and at least 25 clicks.
 - All 14 listings remain visible in the report, including quiet items.
 
+Marketplace money model:
+
+- "On the table" counts only a buyer's specific offer or an explicitly agreed
+  amount. Availability checks and general interest count as pipeline, not cash.
+- The dashboard shows both MYR and approximate USD for every listing.
+- USD conversion uses Bank Negara Malaysia's 28 August 2026 reference rate of
+  USD1 = RM4.0275 and links directly to the source.
+- A counter target is not counted as cash until the buyer accepts it.
+
 Dashboard density follows a 4px rhythm. Currency values use tabular numerals.
 Essential text is never smaller than 12px and visible targets are at least
 44px tall. Person-to-person actions are always copy-only: Red prepares the
 draft, and Adam sends it manually in Helium.
+
+Dashboard simplification, 2026-08-31:
+
+| Check | Result |
+| --- | --- |
+| Primary answer | Firm-offer USD total above the fold |
+| Current money on the table | RM590, approximately USD146.49 |
+| Firm offers represented | Mountain Bike RM190, Fender RM400 |
+| Optimistic inquiry value mixed into cash | None |
+| Per-item cash visibility | All 14 listings |
+| Repeated decision inbox | Removed |
+| Approval interaction | Master-detail review and copy |
+| Person-to-person side effects | 0 |
 
 ## Brand tokens
 
