@@ -176,7 +176,8 @@ Approval-driven agent expansion, 2026-08-31:
 | All listing coverage | 14 of 14 |
 | Live connector status | Dedicated Red Helium connected, hourly monitor active |
 | Production Shapeable rerun | 20/20 checks passed, zero findings |
-| Production Shapeable audit ID | `audit-20260831053613` |
+| Post-price-change contract tests | 9 of 9 passed |
+| Production Shapeable audit ID | `audit-20260831060830` |
 
 Visual captures:
 
