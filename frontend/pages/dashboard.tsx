@@ -503,7 +503,7 @@ export default function DashboardPage() {
           <section id="pipeline" aria-labelledby="pipeline-heading" className="mt-20 scroll-mt-28">
             <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(280px,0.45fr)] md:items-end"><div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.09em] text-gold">Listing ledger / 14</p><h2 id="pipeline-heading" className="mt-3 font-display text-[clamp(2.2rem,4vw,4.2rem)] font-semibold leading-none tracking-[-0.04em]">Every item. <span className="italic text-accent-light">Nothing hidden.</span></h2></div><p className="text-base leading-7 text-muted-foreground">All fields reflow into readable two-column records on smaller screens. Nothing is clipped or pushed off-canvas.</p></div>
 
-            <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-card/70 shadow-2xl shadow-black/15">
+            <div className="mt-8 rounded-2xl border border-border bg-card/70 shadow-2xl shadow-black/15">
               <div className="hidden min-h-12 grid-cols-[minmax(180px,1.35fr)_92px_minmax(150px,1fr)_minmax(170px,1.2fr)_118px_112px] items-center gap-4 border-b border-border px-4 font-opsmono text-sm uppercase tracking-[0.04em] text-muted-foreground xl:grid"><span>Item</span><span>Asking</span><span>Top lead</span><span>Signal</span><span>Status</span><span className="text-right">Next move</span></div>
               {pipeline.map((row, index) => (
                 <article key={row.item} className="grid grid-cols-2 gap-x-5 gap-y-4 border-b border-border px-4 py-5 transition-colors hover:bg-card xl:min-h-[68px] xl:grid-cols-[minmax(180px,1.35fr)_92px_minmax(150px,1fr)_minmax(170px,1.2fr)_118px_112px] xl:items-center xl:gap-4 xl:py-3">
