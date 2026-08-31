@@ -151,7 +151,8 @@ Dashboard redesign verification, 2026-08-31:
 | Unapproved messaging requests | 0 |
 | Em dashes in dashboard source | 0 |
 | Latest report snapshot | 31 Aug, 12:18 PM SGT |
-| Production Shapeable rerun | Pending deployment |
+| Production Shapeable rerun | 20 of 20 checks passed, 0 findings |
+| Production Shapeable audit ID | `audit-20260831044619` |
 | Helium visual and keyboard pass | Awaiting one-time remote-debugging approval |
 
 Visual captures:
