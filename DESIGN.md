@@ -179,6 +179,27 @@ Approval-driven agent expansion, 2026-08-31:
 | Post-price-change contract tests | 9 of 9 passed |
 | Production Shapeable audit ID | `audit-20260831060830` |
 
+Approval handoff refinement, 2026-08-31:
+
+| Check | Result |
+| --- | --- |
+| Ranked reply decisions in inbox | 11 of 11 |
+| Total inbox entries | 12, including the verified Echo price change |
+| Latest lead represented | Hamka, Cajon Bundle, 2:31 PM SGT |
+| Reply handoff | Review, approve and copy, then manual paste in Helium |
+| Extra confirmation checkbox | Removed |
+| Persistent copied state | Verified in isolated headless Helium |
+| Person-to-person side effects | 0 |
+| Minimum visible target size | 44px |
+| Desktop horizontal overflow | None |
+| Mobile horizontal overflow at 390px | None |
+| Production Helium dialog pass | Hamka situation, reasoning, draft, and pickup details verified |
+| Contract tests | 9 of 9 passed |
+| Production Shapeable rerun | 21 of 21 checks passed, zero findings, 100/100 surface score |
+| Production Shapeable audit ID | `audit-20260831070003` |
+| Production deployment ID | `dpl_EtP2b4pWVYBraFmzoWxVcSKQan2g` |
+| Code commit | `b8f12fe` |
+
 Visual captures:
 
 - `redmart-engagement-desktop.png`
