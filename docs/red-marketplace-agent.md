@@ -55,8 +55,8 @@ before proposing another change.
 
 ## Current execution boundary
 
-The production dashboard stores Adam's approvals in the browser. Live Facebook
-monitoring and listing execution require the local Helium connector and its
-one-time remote-debugging approval. The interface must say when this connector
-is unavailable and must not claim a Facebook change was applied when only a
-local approval was recorded.
+The production dashboard stores Adam's approvals in the browser. Red's dedicated
+local Helium profile is connected for hourly monitoring and exact approved
+listing edits. Dashboard approval state does not automatically route to that
+local executor, so every applied change must still be verified against the live
+Facebook selling dashboard before the interface reports it as complete.

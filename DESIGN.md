@@ -160,7 +160,7 @@ Dashboard redesign verification, 2026-08-31:
 | Reduced-motion handling | Global zero-duration override added |
 | Unapproved messaging requests | 0 |
 | Em dashes in dashboard source | 0 |
-| Latest report snapshot | 31 Aug, 12:18 PM SGT |
+| Latest report snapshot | 31 Aug, 1:59 PM SGT |
 | Production Shapeable rerun | 20 of 20 checks passed, 0 findings |
 | Production Shapeable audit ID | `audit-20260831044619` |
 | Helium visual and keyboard pass | Awaiting one-time remote-debugging approval |
@@ -171,10 +171,10 @@ Approval-driven agent expansion, 2026-08-31:
 | --- | --- |
 | Persistent browser approval state | Implemented |
 | Reply approval behavior | Review and copy only |
-| Exact price approval | Amazon Echo RM130 to RM120 |
+| Exact price approval | Amazon Echo RM130 to RM120, applied and verified live |
 | Price watcher policy | 72 hours, 25 clicks, 24-hour cooldown |
 | All listing coverage | 14 of 14 |
-| Live connector status | Explicitly unavailable until Helium approval |
+| Live connector status | Dedicated Red Helium connected, hourly monitor active |
 | Production Shapeable rerun | 20/20 checks passed, zero findings |
 | Production Shapeable audit ID | `audit-20260831053613` |
 

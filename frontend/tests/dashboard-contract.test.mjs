@@ -14,11 +14,11 @@ test('dashboard requires review and prepares copy without a messaging request', 
 })
 
 test('dashboard carries the latest sales brief and pricing decision', () => {
-  assert.match(dashboard, /31 Aug, 12:18 PM SGT/)
+  assert.match(dashboard, /31 Aug, 1:59 PM SGT/)
   assert.match(dashboard, /credible money/)
   assert.match(dashboard, /RM590/)
   assert.match(dashboard, /Accept RM190 and lock a pickup time/)
-  assert.match(dashboard, /Amazon Echo: RM130 to RM120/)
+  assert.match(dashboard, /Amazon Echo is live at RM120/)
   assert.match(dashboard, /active listings/)
   assert.doesNotMatch(dashboard, /—/)
 })
@@ -36,9 +36,9 @@ test('Red exposes an approval-driven sales operating model', () => {
   assert.match(dashboard, /red-marketplace-decisions-v1/)
   assert.match(dashboard, /Do the work automatically\. Escalate the decisions\./)
   assert.match(dashboard, /72 hours with no buyer signal and at least 25 clicks/)
-  assert.match(dashboard, /I approve changing only the Amazon Echo price from RM130 to RM120/)
+  assert.match(dashboard, /Amazon Echo price is live at RM120/)
   assert.match(dashboard, /14 \/ 14/)
-  assert.match(dashboard, /Live Facebook sync/)
+  assert.match(dashboard, /Monitoring schedule/)
 })
 
 test('homepage links to the dashboard and the former route redirects', () => {

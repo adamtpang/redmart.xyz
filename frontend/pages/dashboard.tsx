@@ -18,11 +18,8 @@ import {
   PackageSearch,
   RefreshCw,
   ShieldCheck,
-  SlidersHorizontal,
   Tag,
-  TrendingDown,
   Tv,
-  WifiOff,
   Zap,
   type LucideIcon,
 } from 'lucide-react'
@@ -76,7 +73,7 @@ type ApprovalItem = {
   actionId?: string
 }
 
-const snapshotLabel = '31 Aug, 12:18 PM SGT'
+const snapshotLabel = '31 Aug, 1:59 PM SGT'
 
 const actions: Action[] = [
   {
@@ -125,8 +122,22 @@ const actions: Action[] = [
     note: 'Tim owns this item. Tim must approve any price move or sale commitment.',
   },
   {
-    id: 'mohd-bike',
+    id: 'anand-maudio',
     rank: 4,
+    item: 'M-Audio Monitor Pair',
+    buyer: 'Anand',
+    ask: 200,
+    signal: 'New availability inquiry',
+    move: 'Hold RM200 and request an exact pickup time',
+    urgency: 'Today',
+    received: 'Today, 12:38 PM',
+    icon: MessageSquareText,
+    reason: 'Anand is the newest inquiry on the speaker pair. The asking price is already competitive, so test collection intent before discussing a discount.',
+    draft: 'Hi Anand, yes, the M-Audio speaker pair is available for RM200. Pickup is at Forest City Marina Hotel. What day and exact time can you collect?',
+  },
+  {
+    id: 'mohd-bike',
+    rank: 5,
     item: 'Mountain Bike',
     buyer: 'Mohd',
     ask: 190,
@@ -140,7 +151,7 @@ const actions: Action[] = [
   },
   {
     id: 'suria-drums',
-    rank: 5,
+    rank: 6,
     item: 'German-brand Drum Kit',
     buyer: 'Suria',
     ask: 590,
@@ -154,7 +165,7 @@ const actions: Action[] = [
   },
   {
     id: 'samri-cajon',
-    rank: 6,
+    rank: 7,
     item: 'Cajon Bundle',
     buyer: 'Samri',
     ask: 140,
@@ -168,7 +179,7 @@ const actions: Action[] = [
   },
   {
     id: 'shaaban-bass',
-    rank: 7,
+    rank: 8,
     item: '6-string Bass',
     buyer: 'Sha’aban',
     ask: 590,
@@ -182,7 +193,7 @@ const actions: Action[] = [
   },
   {
     id: 'kangwei-ukulele',
-    rank: 8,
+    rank: 9,
     item: 'Ukulele',
     buyer: 'Kangwei',
     ask: 90,
@@ -197,7 +208,7 @@ const actions: Action[] = [
   },
   {
     id: 'sufiyan-bike',
-    rank: 9,
+    rank: 10,
     item: 'Mountain Bike',
     buyer: 'Sufiyan',
     ask: 190,
@@ -219,10 +230,10 @@ const pipeline: PipelineRow[] = [
   { item: 'Cajon Bundle', asking: 'RM140', lead: 'Samri', signal: 'Fresh inquiry', status: 'Fresh', next: 'Ask pickup time' },
   { item: '6-string Bass', asking: 'RM590', lead: 'Sha’aban', signal: 'General interest', status: 'Fresh', next: 'Ask pickup time' },
   { item: 'Ukulele', asking: 'RM90', lead: 'Kangwei', signal: 'Asked for brand', status: 'Fresh', next: 'Verify brand' },
-  { item: 'Air Purifier', asking: 'RM150', lead: 'Ya Wau Sin', signal: 'Earlier availability check', status: 'Waiting', next: 'Ask pickup time' },
-  { item: 'Arturia MiniLab MkII', asking: 'RM270', lead: 'Dam', signal: 'Earlier conversation', status: 'Waiting', next: 'Follow up once' },
-  { item: 'M-Audio Monitor Pair', asking: 'RM200', lead: 'Marketplace buyer', signal: 'Earlier conversation', status: 'Waiting', next: 'Follow up once' },
-  { item: 'Amazon Echo', asking: 'RM130', lead: 'None', signal: '47 clicks, no buyer signal', status: 'No signal', next: 'Consider RM120' },
+  { item: 'Air Purifier', asking: 'RM150', lead: 'Zainul + 1', signal: 'Recent message cluster', status: 'Fresh', next: 'Ask pickup time' },
+  { item: 'Arturia MiniLab MkII', asking: 'RM270', lead: 'Dam', signal: 'Recent message', status: 'Fresh', next: 'Ask pickup time' },
+  { item: 'M-Audio Monitor Pair', asking: 'RM200', lead: 'Anand', signal: 'Asked if available', status: 'Fresh', next: 'Ask pickup time' },
+  { item: 'Amazon Echo', asking: 'RM120', lead: 'None', signal: 'Price test live after 47 clicks', status: 'Watch', next: 'Reassess after 24 hours' },
   { item: 'Acoustic-Electric Guitar', asking: 'RM480', lead: 'None fresh', signal: 'No fresh preview', status: 'Watch', next: 'Hold and monitor' },
   { item: 'Acoustic Guitar', asking: 'RM190', lead: 'None fresh', signal: 'No fresh preview', status: 'Watch', next: 'Hold and monitor' },
   { item: 'Squier Stratocaster', asking: 'RM490', lead: 'None fresh', signal: 'No fresh preview', status: 'Watch', next: 'Hold and monitor' },
@@ -231,14 +242,14 @@ const pipeline: PipelineRow[] = [
 const proof = [
   { value: 'RM590', label: 'credible money', detail: 'About USD147' },
   { value: '2', label: 'specific offers', detail: 'Bike and Fender' },
-  { value: '7', label: 'fresh leads', detail: 'Since Sunday' },
+  { value: '9', label: 'items with messages', detail: 'Visible notification pane' },
   { value: '14', label: 'active listings', detail: 'All accounted for' },
 ]
 
 const attention = [
-  { item: 'Mountain Bike', clicks: 408, width: '100%' },
-  { item: 'Air Purifier', clicks: 263, width: '64%' },
-  { item: 'TCL 98-inch TV', clicks: 244, width: '60%' },
+  { item: 'Mountain Bike', clicks: 411, width: '100%' },
+  { item: 'Air Purifier', clicks: 264, width: '64%' },
+  { item: 'TCL 98-inch TV', clicks: 246, width: '60%' },
   { item: 'M-Audio Monitors', clicks: 218, width: '53%' },
   { item: 'Amazon Echo', clicks: 47, width: '12%' },
 ]
@@ -263,9 +274,9 @@ const approvalItems: ApprovalItem[] = [
   {
     id: 'price:echo-120',
     kind: 'Price change',
-    title: 'Reduce Amazon Echo from RM130 to RM120',
-    summary: '47 clicks and no visible buyer signal make this the only current price test.',
-    value: '-RM10',
+    title: 'Amazon Echo price is live at RM120',
+    summary: 'Approved, applied through Red Helium, and verified on the Facebook selling dashboard.',
+    value: 'RM120',
   },
 ]
 
@@ -325,14 +336,12 @@ export default function DashboardPage() {
   const [reviewAction, setReviewAction] = useState<Action | null>(null)
   const [reviewed, setReviewed] = useState(false)
   const [copyError, setCopyError] = useState('')
-  const [priceReviewOpen, setPriceReviewOpen] = useState(false)
-  const [priceReviewed, setPriceReviewed] = useState(false)
 
   const activeAction = useMemo(() => actions.find((action) => action.id === activeActionId) ?? actions[0], [activeActionId])
   const decisionSnapshot = useSyncExternalStore(subscribeToDecisionStore, getDecisionSnapshot, () => emptyDecisionSnapshot)
   const decisionStates = useMemo(() => parseDecisionSnapshot(decisionSnapshot), [decisionSnapshot])
   const copiedSet = useMemo(() => new Set(actions.filter((action) => decisionStates[`reply:${action.id}`] === 'copied').map((action) => action.id)), [decisionStates])
-  const pendingApprovalCount = approvalItems.filter((item) => !decisionStates[item.id]).length
+  const pendingApprovalCount = approvalItems.filter((item) => item.id !== 'price:echo-120' && !decisionStates[item.id]).length
   const priceWatcherEnabled = decisionStates['policy:price-watcher'] !== 'held'
 
   const openReview = (action: Action) => {
@@ -347,16 +356,6 @@ export default function DashboardPage() {
     setCopyError('')
   }
 
-  const openPriceReview = () => {
-    setPriceReviewOpen(true)
-    setPriceReviewed(false)
-  }
-
-  const closePriceReview = () => {
-    setPriceReviewOpen(false)
-    setPriceReviewed(false)
-  }
-
   const approveAndCopy = async () => {
     if (!reviewAction || !reviewed) return
     try {
@@ -366,12 +365,6 @@ export default function DashboardPage() {
     } catch {
       setCopyError('Clipboard access was blocked. Select the draft and copy it manually.')
     }
-  }
-
-  const approvePriceChange = () => {
-    if (!priceReviewed) return
-    writeDecisionStatus('price:echo-120', 'approved')
-    closePriceReview()
   }
 
   return (
@@ -402,7 +395,7 @@ export default function DashboardPage() {
           <section id="brief" aria-labelledby="brief-heading" className="scroll-mt-28">
             <p className="font-opsmono text-sm font-semibold uppercase tracking-[0.08em] text-[#8b2232]">Marketplace sales desk / 00</p>
             <div className="mt-5 grid gap-7 lg:grid-cols-[minmax(0,1.45fr)_minmax(300px,0.55fr)] lg:items-end">
-              <h1 id="brief-heading" className="max-w-[980px] text-[clamp(2.8rem,6vw,5.7rem)] font-medium leading-[0.94] tracking-[-0.065em]">Close RM190. Then work the next six live buyers.</h1>
+              <h1 id="brief-heading" className="max-w-[980px] text-[clamp(2.8rem,6vw,5.7rem)] font-medium leading-[0.94] tracking-[-0.065em]">Close RM190. Then work the live buyer queue.</h1>
               <div className="max-w-xl lg:justify-self-end"><p className="text-lg leading-8 text-muted-foreground">Red has ranked the strongest Marketplace signals into one decision queue. Review the reasoning, approve a draft, then send it yourself in Helium.</p><div className="mt-5 flex items-center gap-2 font-opsmono text-sm text-muted-foreground"><Clock3 className="size-4" aria-hidden="true" />Snapshot {snapshotLabel}</div></div>
             </div>
 
@@ -418,11 +411,11 @@ export default function DashboardPage() {
             <div className="mt-4 grid border border-border bg-card lg:grid-cols-[minmax(0,1.25fr)_repeat(3,minmax(170px,0.5fr))]" aria-label="Red agent operating status">
               <div className="flex items-start gap-4 p-5 lg:p-6">
                 <span className="grid size-11 shrink-0 place-items-center bg-[#211a1b] text-[#e3c35a]"><Bot className="size-5" aria-hidden="true" /></span>
-                <div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.06em] text-[#8b2232]">Red operating status</p><h2 className="mt-1 text-xl font-semibold tracking-[-0.03em]">Latest snapshot analyzed. Live sync needs Helium approval.</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Red can keep ranking, researching, and drafting from captured data. Facebook changes wait for an exact approval and a connected local Helium session.</p></div>
+                <div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.06em] text-[#8b2232]">Red operating status</p><h2 className="mt-1 text-xl font-semibold tracking-[-0.03em]">Dedicated Red Helium is connected.</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Red can monitor listings, rank leads, research prices, and verify approved listing changes. Buyer replies remain manual.</p></div>
               </div>
               <div className="border-t border-border p-5 lg:border-l lg:border-t-0"><Database className="size-5 text-[#2f7b55]" aria-hidden="true" /><strong className="mt-4 block text-lg">14 / 14</strong><span className="mt-1 block text-sm text-muted-foreground">Listings accounted for</span></div>
               <div className="border-t border-border p-5 lg:border-l lg:border-t-0"><ClipboardCheck className="size-5 text-[#8b2232]" aria-hidden="true" /><strong className="mt-4 block text-lg tabular-nums">{pendingApprovalCount}</strong><span className="mt-1 block text-sm text-muted-foreground">Decisions waiting</span></div>
-              <div className="border-t border-border p-5 lg:border-l lg:border-t-0"><WifiOff className="size-5 text-[#9a6d20]" aria-hidden="true" /><strong className="mt-4 block text-lg">Paused</strong><span className="mt-1 block text-sm text-muted-foreground">Live Facebook sync</span></div>
+              <div className="border-t border-border p-5 lg:border-l lg:border-t-0"><RefreshCw className="size-5 text-[#2f7b55]" aria-hidden="true" /><strong className="mt-4 block text-lg">Hourly</strong><span className="mt-1 block text-sm text-muted-foreground">Monitoring schedule</span></div>
             </div>
           </section>
 
@@ -455,7 +448,7 @@ export default function DashboardPage() {
             </div>
 
             <aside className="border border-border bg-card" aria-label="Ranked lead queue">
-              <div className="border-b border-border p-5 md:p-6"><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#8b2232]">Lead queue / 09</p><h2 className="mt-2 text-2xl font-medium tracking-[-0.04em]">Choose the next buyer</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Ranked by offer specificity, value, recency, and pickup readiness.</p></div>
+              <div className="border-b border-border p-5 md:p-6"><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#8b2232]">Lead queue / {String(actions.length).padStart(2, '0')}</p><h2 className="mt-2 text-2xl font-medium tracking-[-0.04em]">Choose the next buyer</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Ranked by offer specificity, value, recency, and pickup readiness.</p></div>
               <ol>
                 {actions.map((action) => {
                   const Icon = action.icon
@@ -482,18 +475,19 @@ export default function DashboardPage() {
 
             <div className="mt-8 border-t border-[#282321]">
               {approvalItems.map((item, index) => {
-                const state = decisionStates[item.id]
+                const isVerified = item.id === 'price:echo-120'
+                const state = isVerified ? 'approved' : decisionStates[item.id]
                 const action = item.actionId ? actions.find((candidate) => candidate.id === item.actionId) : undefined
-                const review = () => item.kind === 'Price change' ? openPriceReview() : action && openReview(action)
+                const review = () => action && openReview(action)
                 return (
                   <article key={item.id} className="grid gap-5 border-b border-border px-4 py-5 md:grid-cols-[48px_120px_minmax(0,1fr)_110px_auto] md:items-center md:py-4">
                     <span className="font-opsmono text-sm text-[#8b2232]">{String(index + 1).padStart(2, '0')}</span>
                     <Badge variant="outline" className={cn('h-7 px-3 text-sm', item.kind === 'Price change' ? 'border-[#9a6d20]/25 bg-[#f6ecd7] text-[#79551c]' : 'border-[#355f9a]/20 bg-[#e5eef9] text-[#294f82]')}>{item.kind}</Badge>
                     <div><h3 className="text-lg font-semibold tracking-[-0.025em]">{item.title}</h3><p className="mt-1 text-sm leading-6 text-muted-foreground">{item.summary}</p></div>
                     <strong className="font-opsmono text-lg font-medium tabular-nums md:text-right">{item.value}</strong>
-                    <Button variant="outline" className={cn('min-h-11 min-w-[148px] border-border bg-transparent px-4 text-sm hover:bg-muted', state && 'border-[#2f7b55]/25 bg-[#dff3e7] text-[#245d42]')} onClick={review}>
+                    <Button variant="outline" className={cn('min-h-11 min-w-[148px] border-border bg-transparent px-4 text-sm hover:bg-muted', state && 'border-[#2f7b55]/25 bg-[#dff3e7] text-[#245d42]')} onClick={review} disabled={isVerified}>
                       {state ? <CheckCircle2 aria-hidden="true" /> : <ChevronRight aria-hidden="true" />}
-                      {state === 'copied' ? 'Copied for send' : state === 'approved' ? 'Approved locally' : state === 'held' ? 'Held' : 'Review decision'}
+                      {isVerified ? 'Verified live' : state === 'copied' ? 'Copied for send' : state === 'held' ? 'Held' : 'Review decision'}
                     </Button>
                   </article>
                 )
@@ -543,15 +537,15 @@ export default function DashboardPage() {
 
           <section id="pricing" aria-labelledby="pricing-heading" className="mt-20 grid scroll-mt-28 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.62fr)]">
             <div className="border border-border bg-card p-5 md:p-7">
-              <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between"><div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#8b2232]">Price decision / 01</p><h2 id="pricing-heading" className="mt-3 text-3xl font-medium tracking-[-0.045em]">Amazon Echo: RM130 to RM120</h2><p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground">The Echo has 47 clicks and no visible buyer signal. A RM10 cut is the only current repricing proposal. {decisionStates['price:echo-120'] === 'approved' ? 'The exact change is approved locally but not yet applied to Facebook.' : decisionStates['price:echo-120'] === 'held' ? 'The current decision is to hold RM130.' : 'No change has been approved or applied.'}</p></div><Badge variant="outline" className="h-7 shrink-0 border-[#9a6d20]/25 bg-[#f6ecd7] px-3 text-sm text-[#79551c]"><TrendingDown data-icon="inline-start" aria-hidden="true" />Owner decision</Badge></div>
-              <div className="mt-8 grid border-y border-border sm:grid-cols-3"><div className="py-5 sm:pr-5"><span className="font-opsmono text-sm uppercase text-muted-foreground">Current</span><strong className="mt-2 block font-opsmono text-3xl font-medium tabular-nums">RM130</strong></div><div className="border-t border-border py-5 sm:border-l sm:border-t-0 sm:px-5"><span className="font-opsmono text-sm uppercase text-[#8b2232]">Proposed</span><strong className="mt-2 block font-opsmono text-3xl font-medium tabular-nums text-[#8b2232]">RM120</strong></div><div className="border-t border-border py-5 sm:border-l sm:border-t-0 sm:pl-5"><span className="font-opsmono text-sm uppercase text-muted-foreground">Tradeoff</span><strong className="mt-2 block text-base font-medium">RM10 less for a faster conversion test</strong></div></div>
-              <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><p className="text-sm leading-6 text-muted-foreground">If approved, reassess 24 hours after the edit. Hold all other listing prices while buyer conversations are active.</p><Button variant="outline" className={cn('min-h-11 shrink-0 border-border bg-transparent px-4 text-sm hover:bg-muted', decisionStates['price:echo-120'] && 'border-[#2f7b55]/25 bg-[#dff3e7] text-[#245d42]')} onClick={openPriceReview}>{decisionStates['price:echo-120'] === 'approved' ? <CheckCircle2 aria-hidden="true" /> : <ChevronRight aria-hidden="true" />}{decisionStates['price:echo-120'] === 'approved' ? 'Approved locally' : decisionStates['price:echo-120'] === 'held' ? 'Price held' : 'Review price change'}</Button></div>
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between"><div><p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#8b2232]">Price test / 01</p><h2 id="pricing-heading" className="mt-3 text-3xl font-medium tracking-[-0.045em]">Amazon Echo is live at RM120</h2><p className="mt-3 max-w-3xl text-base leading-7 text-muted-foreground">The approved RM10 reduction was applied through Red Helium and verified on the Facebook selling dashboard after 47 clicks without visible buyer intent.</p></div><Badge variant="outline" className="h-7 shrink-0 border-[#2f7b55]/25 bg-[#dff3e7] px-3 text-sm text-[#245d42]"><CheckCircle2 data-icon="inline-start" aria-hidden="true" />Verified live</Badge></div>
+              <div className="mt-8 grid border-y border-border sm:grid-cols-3"><div className="py-5 sm:pr-5"><span className="font-opsmono text-sm uppercase text-muted-foreground">Previous</span><strong className="mt-2 block font-opsmono text-3xl font-medium tabular-nums">RM130</strong></div><div className="border-t border-border py-5 sm:border-l sm:border-t-0 sm:px-5"><span className="font-opsmono text-sm uppercase text-[#2f7b55]">Live</span><strong className="mt-2 block font-opsmono text-3xl font-medium tabular-nums text-[#245d42]">RM120</strong></div><div className="border-t border-border py-5 sm:border-l sm:border-t-0 sm:pl-5"><span className="font-opsmono text-sm uppercase text-muted-foreground">Change</span><strong className="mt-2 block text-base font-medium">RM10 lower, a 7.7% price test</strong></div></div>
+              <div className="mt-5 flex items-start gap-3 text-sm leading-6 text-muted-foreground"><Clock3 className="mt-0.5 size-4 shrink-0 text-[#2f7b55]" aria-hidden="true" />Reassess after 24 hours. Hold all other listing prices while buyer conversations are active.</div>
             </div>
 
             <div className="bg-[#8b2232] p-5 text-white md:p-7">
               <p className="font-opsmono text-sm font-semibold uppercase tracking-[0.07em] text-[#f1cad0]">Attention map / clicks</p><h2 className="mt-3 text-3xl font-medium tracking-[-0.045em]">Demand is concentrated.</h2>
               <div className="mt-7 space-y-5">{attention.map((item) => (<div key={item.item}><div className="flex items-center justify-between gap-4 text-sm"><span>{item.item}</span><span className="font-opsmono tabular-nums">{item.clicks}</span></div><div className="mt-2 h-1.5 bg-white/20"><div className="h-full bg-[#e3c35a]" style={{ width: item.width }} /></div></div>))}</div>
-              <div className="mt-7 border-t border-white/25 pt-5 text-sm leading-6 text-[#f3dce0]"><strong className="text-white">Zero-signal watch:</strong> Echo is the only listing with measured clicks but no buyer signal. Three guitars have no fresh inquiry preview and should stay unchanged until their listing data is checked.</div>
+              <div className="mt-7 border-t border-white/25 pt-5 text-sm leading-6 text-[#f3dce0]"><strong className="text-white">Price-test watch:</strong> Echo is now live at RM120. Recheck it after 24 hours. Three guitars have no fresh inquiry preview and should stay unchanged while their market position is already competitive.</div>
             </div>
           </section>
 
@@ -581,19 +575,6 @@ export default function DashboardPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={priceReviewOpen} onOpenChange={(open) => !open && closePriceReview()}>
-        <DialogContent className="dashboard-dialog-theme border-border bg-popover font-ops text-popover-foreground shadow-2xl shadow-black/25 sm:max-w-xl">
-          <DialogHeader><Badge variant="outline" className="mb-1 h-7 border-[#9a6d20]/25 bg-[#f6ecd7] px-3 text-sm text-[#79551c]"><TrendingDown data-icon="inline-start" aria-hidden="true" />Price approval</Badge><DialogTitle className="font-ops text-2xl font-medium tracking-[-0.04em] text-foreground">Reduce Amazon Echo to RM120?</DialogTitle><DialogDescription className="text-base leading-7 text-muted-foreground">Approve one exact listing-field change. No other title, description, status, or listing field is included.</DialogDescription></DialogHeader>
-          <div className="space-y-5">
-            <div className="grid grid-cols-3 border-y border-border py-4 text-sm"><div><p className="font-opsmono uppercase text-muted-foreground">Current</p><p className="mt-1 font-opsmono text-xl font-semibold tabular-nums">RM130</p></div><div className="border-l border-border pl-4"><p className="font-opsmono uppercase text-[#8b2232]">Approved price</p><p className="mt-1 font-opsmono text-xl font-semibold tabular-nums text-[#8b2232]">RM120</p></div><div className="border-l border-border pl-4"><p className="font-opsmono uppercase text-muted-foreground">Change</p><p className="mt-1 font-opsmono text-xl font-semibold tabular-nums">-RM10</p></div></div>
-            <div><p className="mb-2 font-opsmono text-sm font-semibold uppercase tracking-[0.05em] text-[#8b2232]">Why Red recommends it</p><p className="text-base leading-7 text-muted-foreground">The listing has 47 clicks and no visible buyer signal. A 7.7% reduction is small enough to preserve value and large enough to create a fresh pricing test.</p></div>
-            <div className="grid gap-3 sm:grid-cols-2"><div className="border border-border bg-background p-4"><SlidersHorizontal className="size-5 text-[#8b2232]" aria-hidden="true" /><strong className="mt-3 block">Exact scope</strong><p className="mt-1 text-sm leading-6 text-muted-foreground">Amazon Echo price only, RM130 to RM120.</p></div><div className="border border-border bg-background p-4"><Clock3 className="size-5 text-[#8b2232]" aria-hidden="true" /><strong className="mt-3 block">Recheck window</strong><p className="mt-1 text-sm leading-6 text-muted-foreground">Wait 24 hours before proposing another change.</p></div></div>
-            <label className="flex min-h-12 cursor-pointer items-start gap-3 border border-border bg-muted p-4 text-base text-foreground hover:bg-[#dedad4]"><input type="checkbox" checked={priceReviewed} onChange={(event) => setPriceReviewed(event.target.checked)} className="mt-1 size-5 shrink-0 accent-[#8b2232]" /><span>I approve changing only the Amazon Echo price from RM130 to RM120.</span></label>
-            <div className="flex items-start gap-3 border border-[#9a6d20]/25 bg-[#f6ecd7] p-4 text-sm leading-6 text-[#79551c]"><WifiOff className="mt-0.5 size-4 shrink-0" aria-hidden="true" />This approval is saved in this dashboard. Applying it to Facebook still requires the local Helium connector, which is currently awaiting remote-debugging approval.</div>
-          </div>
-          <DialogFooter className="border-border bg-muted"><Button variant="ghost" className="min-h-11" onClick={() => { writeDecisionStatus('price:echo-120', 'held'); closePriceReview() }}>Hold price</Button><Button className="min-h-11" disabled={!priceReviewed} onClick={approvePriceChange}><Check aria-hidden="true" />Approve exact price</Button></DialogFooter>
-        </DialogContent>
-      </Dialog>
     </>
   )
 }
