@@ -16,3 +16,6 @@ package-lock.json
 tokens.json
 scripts/apps.json
 pipe/
+.vercel
+.env*
+!.env.example
